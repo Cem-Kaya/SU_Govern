@@ -1,0 +1,24 @@
+{
+  "name": "sol_ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "compile": "solcjs --abi --include-path node_modules/ --base-path . blockchain/contracts/myDao.sol --output-dir blockchain/build"
+  },
+  "dependencies": {
+    "bulma": "^0.9.4",
+    "next": "12.1.6",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "solc": "^0.8.6-fixed",
+    "web3": "^1.7.3"
+  },
+  "devDependencies": {
+    "eslint": "8.15.0",
+    "eslint-config-next": "12.1.6"
+  }
+}

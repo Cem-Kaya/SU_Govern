@@ -1,0 +1,72 @@
+[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"}
+,{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},
+{"indexed":false,"internalType":"address","name":"author","type":"address"},
+{"indexed":false,"internalType":"string","name":"name","type":"string"},
+{"indexed":false,"internalType":"uint256","name":"votesForYes","type":"uint256"},
+{"indexed":false,"internalType":"uint256","name":"votesForNo","type":"uint256"}],"name":"proposal_info","type":"event"},
+{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},
+{"indexed":false,"internalType":"address","name":"author","type":"address"},
+{"indexed":false,"internalType":"string","name":"name","type":"string"},
+{"indexed":false,"internalType":"string[]","name":"options","type":"string[]"},
+{"indexed":false,"internalType":"uint256[]","name":"num_options","type":"uint256[]"}],"name":"proposal_info2","type":"event"}
+,{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},
+{"indexed":false,"internalType":"address","name":"author","type":"address"},
+{"indexed":false,"internalType":"string","name":"name","type":"string"}
+,{"indexed":false,"internalType":"string[]","name":"options","type":"string[]"},
+{"indexed":false,"internalType":"uint256[]","name":"num_options","type":"uint256[]"},
+{"indexed":false,"internalType":"uint256","name":"power","type":"uint256"},
+{"indexed":false,"internalType":"uint256","name":"proposal_info_type","type":"uint256"}],"name":"proposal_info3","type":"event"},
+{"inputs":[{"internalType":"string","name":"name","type":"string"}],"name":"createProposal","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[{"internalType":"string","name":"name","type":"string"},
+{"internalType":"string[]","name":"_options","type":"string[]"},
+{"internalType":"uint256[]","name":"_options_num","type":"uint256[]"}],"name":"createProposal2","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[{"internalType":"string","name":"name","type":"string"},
+{"internalType":"string[]","name":"_options","type":"string[]"},
+{"internalType":"uint256[]","name":"_options_num","type":"uint256[]"},
+{"internalType":"uint256","name":"_power","type":"uint256"}],"name":"createProposal3","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit_tokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[],"name":"iterate_proposals","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[],"name":"iterate_proposals2","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[],"name":"iterate_proposals3","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[],"name":"iterate_proposals_ultimate","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[],"name":"nextProposalId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+{"inputs":[],"name":"nextProposalId2","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},
+{"internalType":"address","name":"author","type":"address"},
+{"internalType":"string","name":"name","type":"string"},
+{"internalType":"uint256","name":"createdAt","type":"uint256"},
+{"internalType":"uint256","name":"votesForYes","type":"uint256"},
+{"internalType":"uint256","name":"votesForNo","type":"uint256"},
+{"internalType":"enum MyDAO.Status","name":"status","type":"uint8"}],"stateMutability":"view","type":"function"},
+{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals2","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},
+{"internalType":"address","name":"author","type":"address"},
+{"internalType":"string","name":"name","type":"string"},
+{"internalType":"uint256","name":"createdAt","type":"uint256"},
+{"internalType":"enum MyDAO.Status","name":"status","type":"uint8"},
+{"internalType":"uint256","name":"proposal_info_type","type":"uint256"}],"stateMutability":"view","type":"function"},
+{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals3","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},
+{"internalType":"address","name":"author","type":"address"},
+{"internalType":"string","name":"name","type":"string"},
+{"internalType":"uint256","name":"createdAt","type":"uint256"},
+{"internalType":"enum MyDAO.Status","name":"status","type":"uint8"},
+{"internalType":"uint256","name":"power","type":"uint256"},
+{"internalType":"uint256","name":"proposal_info_type","type":"uint256"}],"stateMutability":"view","type":"function"},
+{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"shares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+{"inputs":[],"name":"token","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+{"inputs":[],"name":"totalShares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+{"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"},
+{"internalType":"enum MyDAO.VotingOptions","name":"_vote","type":"uint8"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},
+{"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"},
+{"internalType":"string","name":"_vote","type":"string"}],"name":"vote2","outputs":[],"stateMutability":"nonpayable","type":"function"}
+,{"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"},
+{"internalType":"string","name":"_vote","type":"string"}
+,{"internalType":"uint256","name":"_power","type":"uint256"}],"name":"vote3","outputs":[],"stateMutability":"nonpayable","type":"function"}
+,{"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"}
+,{"internalType":"string[]","name":"_vote","type":"string[]"}
+,{"internalType":"uint256[]","name":"_power","type":"uint256[]"}],"name":"vote3_multiplevotesedition","outputs":[],"stateMutability":"nonpayable","type":"function"}
+,{"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"}
+,{"internalType":"enum MyDAO.VotingOptions","name":"_vote","type":"uint8"}],"name":"vote_weighted","outputs":[],"stateMutability":"nonpayable","type":"function"}
+,{"inputs":[{"internalType":"address","name":"","type":"address"}
+,{"internalType":"uint256","name":"","type":"uint256"}],"name":"votes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
+,{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}]
