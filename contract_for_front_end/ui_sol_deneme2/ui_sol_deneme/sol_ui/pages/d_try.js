@@ -1,5 +1,5 @@
 import 'bulma/css/bulma.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import React from "react"
 import Web3 from 'web3'
 import Head from 'next/head'
@@ -8,7 +8,7 @@ import styles from '../styles/d_try.module.css'
 export default function Dao(){
     const [error,setError]=useState('')
     const [all_props,setall_props]=useState([])
-    //const [selection, setSelection] = useState([])
+    const [selection, setSelection] = useState([])
 
     let web3js
     let daoContract
@@ -236,7 +236,8 @@ export default function Dao(){
         // console.log(myVote.type)
         // console.log(myVote)
         //var x = await daoContract.methods.iterate_proposals2().send({from: selectedAccount})
-        
+        console.log(id)
+        console.log(vote)
         await daoContract.methods.vote_power(id, vote, [1]).send({from: selectedAccount})
         
         //console.log(x['events']['proposal_info2'])
@@ -270,33 +271,40 @@ export default function Dao(){
         console.log(x)
         x=x['events']['proposal_info']
         setall_props(x)
+        setSelection(selectionArrayInitialize(x))
+        console.log(selection)
        // console.log(daoContract.methods.proposals(x-1).call())
         console.log(x)
         return 0;
-        
-        
-
     }    
 
-    let selection = []
-
-    const selectionArrayInitialize = () => {
-        let selCopy = selection
-        for(var i = 0; i < all_props.length; i++){
-            if(all_props[i]["returnValues"]["5"] === "1"){
-                selCopy.push([])
-                selCopy[i].push("")
+    const selectionArrayInitialize = (x) => {
+        let selectionInitializer = []
+        console.log(x)
+        for(var i = 0; i < x.length; i++){
+            if(x[i]["returnValues"]["5"] === "1"){
+                console.log(selectionInitializer)
+                selectionInitializer.push([])
+                selectionInitializer[i].push("")
             }
             else{
-                selCopy.push([])
-                for(var j = 0; j < all_props[i]["returnValues"]["3"].length; j++){
-                    selCopy[i].push(0)
+                console.log(selectionInitializer)
+                selectionInitializer.push([])
+                for(var j = 0; j < x[i]["returnValues"]["3"].length; j++){
+                    console.log(selectionInitializer)
+                    selectionInitializer[i].push(0)
                 }
             }
         }
-        selection = [...selCopy]
-        // console.log(selCopy)
-        // setSelection(false)
+        return selectionInitializer
+    }
+
+    const getTotalCount = (slctArray) => {
+        let count = 0
+        for(var i = 0; i < slctArray.length; i++){
+            count += slctArray[i]
+        }
+        return count
     }
 
     return(
@@ -345,10 +353,6 @@ export default function Dao(){
         </div>
         <br/>
     
-          <label htmlFor="fname">First name:</label>
-          <input type="text" id="fname" name="fname"></input><br></br>
-          <label htmlFor="lname">Last name:</label>
-          <input type="text" id="lname" name="lname"></input><br></br>
             <div className='container'>
                 <button onClick={()=>all_proposals()
             
@@ -358,38 +362,44 @@ export default function Dao(){
         <br/><br/>
         </section>
 
-        {selectionArrayInitialize()}
+        {/*selectionArrayInitialize()*/}
         {all_props.map((element, index) => (
             element["returnValues"]["5"] === "1" ?
-            <form>
+            <form key={index}>
                 <p>{element["returnValues"]["2"]}</p>
                 {
-                element["returnValues"]["3"].map(item => (
-                    <>
-                      <input type="radio" id="html" name="fav_language" value={item} onClick={() => {selection[index][0] = event.target.value}}/>
+                element["returnValues"]["3"].map((item,keyIndex) => (
+                    <div key={keyIndex}>
+                      <input type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
                       <label htmlFor="html">{item}</label><br/>
-                    </>
+                    </div>
                 ))
                 }
                 <button type="button" onClick={ () => 
                     {
                         if(selection[index][0] === ""){
-                            selection[index][0] = element["returnValues"]["3"][0]
+                            alert("please select an input before submitting")
                         }
-                        to_vote_power_singular(element["returnValues"]["0"]), selection[index] }}> Vote </button>
+                        else{
+                            console.log(element["returnValues"]["0"])
+                            console.log(selection[index])
+                            to_vote_power_singular(element["returnValues"]["0"], selection[index]) 
+                        }
+                    }
+                }> Vote </button>
                 
             </form>
             :
-        <form>
+        <form key={index}>
             <p>{element["returnValues"]["2"]}, {element["returnValues"]["5"]}</p>
             {
                 element["returnValues"]["3"].map((item,indx2) => (
-                    <>
+                    <div key={indx2}>
                       <label htmlFor="html">{item}</label>
-                      <button type="button" disabled={selection[index][indx2] === 0} onClick={() => {selection[index][indx2] = selection[index][indx2] - 1}}>-</button>
+                      <button type="button" disabled={selection[index][indx2] === 0} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setSelection(selCopy)}}>-</button>
                       <input type="number" id="html" name="fav_language" disabled={true} value={selection[index][indx2]}/>
-                      <button type="button" disabled={selection[index][indx2] === element["returnValues"]["5"]} onClick={() => {selection[index][indx2] = selection[index][indx2] + 1}}>+</button><br/>
-                    </>
+                      <button type="button" disabled={getTotalCount(selection[index]) == element["returnValues"]["5"]} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setSelection(selCopy)}}>+</button><br/>
+                    </div>
                 ))
             }
             <button type="button" onClick={ () => {
