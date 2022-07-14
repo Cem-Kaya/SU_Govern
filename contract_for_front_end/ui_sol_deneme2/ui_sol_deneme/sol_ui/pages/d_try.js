@@ -9,6 +9,12 @@ export default function Dao(){
     const [error,setError]=useState('')
     const [all_props,setall_props]=useState([])
     const [selection, setSelection] = useState([])
+    const [proposal, setProposal] = useState({
+        text: "", 
+        options: [],
+        voting_power: 0
+    });
+    const [inputList, setInputList] = useState([]);
 
     let web3js
     let daoContract
@@ -164,14 +170,18 @@ export default function Dao(){
         if (!isInitialized) {
             await init();
         }
-
-        var initial_votes = new Array(vote.length)
-        for (var i = 0; i < initial_votes.length ; i++) 
+        
+        var initial_votes = []
+        for (var i = 0; i < vote.length ; i++) 
         {
-                initial_votes[i] = 0;
+            initial_votes.push(0);
         }
         
-        await daoContract.methods.createProposal3(name,vote, initial_votes, power).send({from: selectedAccount})
+        console.log(name)
+        console.log(vote)
+        console.log(power)
+        console.log(initial_votes)
+        await daoContract.methods.createProposal(name,vote, initial_votes, power).send({from: selectedAccount})
         return 0;
         
 
@@ -307,6 +317,10 @@ export default function Dao(){
         return count
     }
 
+    const onAddBtnClick = event => {
+        setInputList(inputList.concat(<Input key={inputList.length} />));
+      };
+
     return(
     <div className={styles.main}>
         <Head>
@@ -328,9 +342,25 @@ export default function Dao(){
         </nav>
         <section>
             <div className="container">
-                <p>placeholder text</p>
+                <h2>CREATE NEW PROPOSAL</h2>
+                <form>
+                    <label>Proposal Text: </label>
+                    <br/>
+                    <textarea onChange={(e) => {{setProposal({...proposal, text: e.target.value})}}} style={{width:"300px", height:"80px"}}/>
+                    <br/>
+                    <button type="button" onClick={() => {let optionValues = proposal.options; optionValues.push(""); setProposal({...proposal, options: optionValues}); setInputList(inputList.concat(<div key={inputList.length}><br/><label>Option {inputList.length + 1}: </label><input required onChange={(e) => {let optionValues = proposal.options; optionValues[inputList.length] = e.target.value; setProposal({...proposal, options: optionValues})}} /></div>))}}>Add New Option</button>
+                    {inputList}
+                    <br/>
+                    <label>Voting Power: </label>
+                    <input type="number" onChange={(e) => {setProposal({...proposal, voting_power: e.target.value})}}/>
+                    <br/>
+                    <br/>
+                    <button type="button" onClick={() => {Create_proposal(proposal.text, proposal.options, proposal.voting_power); /*setProposal({text: "", options: [], voting_power: 0})*/}}>Create This Proposal</button>
+                    {console.log(proposal)}
+                </form>
             </div>
         </section>
+
         <section>
             {/* <div className="text-has-danger">
                 <p>error</p>
@@ -362,6 +392,8 @@ export default function Dao(){
         <br/><br/>
         </section>
 
+        <section>
+        <div className="container">
         {/*selectionArrayInitialize()*/}
         {all_props.map((element, index) => (
             element["returnValues"]["5"] === "1" ?
@@ -410,6 +442,9 @@ export default function Dao(){
         </form>
         )
         )}
+        </div>
+        </section>
+        
      
     </div>
     )
