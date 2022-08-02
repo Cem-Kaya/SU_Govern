@@ -15,6 +15,7 @@ export default function Dao(){
         voting_power: 0
     });
     const [inputList, setInputList] = useState([]);
+    const [selectedNavItem, setSelectedNavItem] = useState(0);
 
     let web3js
     let daoContract
@@ -317,135 +318,174 @@ export default function Dao(){
         return count
     }
 
-    const onAddBtnClick = event => {
-        setInputList(inputList.concat(<Input key={inputList.length} />));
-      };
-
     return(
     <div className={styles.main}>
         <Head>
             <title>DAO APP</title>
             <meta name="description" content="A blockchain dao app" />
-
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossOrigin="anonymous"></link>
         </Head>
-        <nav className="Navbar mt-4 mb-4">
-            <div className='container'>
-                <div className='navbar-brand'>
-                    <h1>DAO</h1>
+        <div className='bg-black' style={{minHeight:"1000px"}}>
+            {/* <div style={{backgroundImage: `url("https://bullekon.com/wp-content/uploads/2022/05/image-1.png")`}}> */}
+            <div className="container" style={{padding:"40px"}}>
+                <div className="row">
+                    <div className="col-4"></div>
+                    <div className="col-4">
+                        <div className="card mb-3 border border-dark">
+                            <img className="card-img-top rounded-0" src="https://redenom.com/info/wp-content/uploads/2018/10/redenom_cover_fb_1200x630_dao_1-1.png" alt="Card image cap"/>
+                            <div className="card-body">
+                                <h4 className="card-title text-center text-black">DAO</h4>
+                                <p className="card-text">This is the DAO page of ...</p>
+                                <p className="card-text"><small className="text-muted">175 members</small></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className='navbar-end'>
-                    <button onClick={
-                        connectWallethandler
-                    } className='button is-primary'>Connect Wallet</button>
+                <div className="row mt-5">
+                    <div className="col-10"></div>
+                    <div className="col-2">
+                        <button onClick={
+                            connectWallethandler} className='btn btn-block btn-primary'>Connect Wallet</button>
+                    </div>
+                </div>
+                <div className="row mt-5">
+                    <nav className="nav nav-pills flex-column flex-sm-row">
+                        <button type='button' className={selectedNavItem === 1 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(1)}}>Proposals</button>
+                        <button type='button' className={selectedNavItem === 2 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(2)}}>Create A Proposal</button>
+                        <button type='button' className={selectedNavItem === 3 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(3)}}>Give Vote</button>
+                        <button type='button' className={selectedNavItem === 4 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(4)}}>Get Tokens</button>    
+                    </nav>
+                </div>
+                <div className='row mt-5'>
+                    {selectedNavItem === 1 ?
+                        all_props.map((element, index) => (
+                            element["returnValues"]["5"] === "1" ?
+                            <div className='row mt-5'>
+                                <div className='col-12'>
+                                    <div className='container border border-white text-white p-5'>
+                                        <form key={index}>
+                                            <h2>{element["returnValues"]["2"]}</h2><br/>
+                                            {
+                                            element["returnValues"]["3"].map((item,keyIndex) => (
+                                                <div key={keyIndex}>
+                                                    <input type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
+                                                    <label htmlFor="html">{item}</label><br/>
+                                                </div>
+                                            ))
+                                            }
+                                            <br/>
+                                            <button type="button" className='btn btn-primary btn-block' onClick={ () => 
+                                                {
+                                                    if(selection[index][0] === ""){
+                                                        alert("please select an input before submitting")
+                                                    }
+                                                    else{
+                                                        console.log(element["returnValues"]["0"])
+                                                        console.log(selection[index])
+                                                        to_vote_power_singular(element["returnValues"]["0"], selection[index]) 
+                                                    }
+                                                }
+                                            }> Vote </button>
+                                        </form>
+                                    </div>
+                                    <div className='col-4'></div>
+                                </div>
+                            </div>
+                            :
+                            <div className='row mt-5'>                            
+                                <div className='col-12'>
+                                    <div className='container border border-white text-white p-5'>
+                                        <form key={index}>
+                                            <h2>{element["returnValues"]["2"]}</h2><br/>
+                                            <h4>Voting Power: {element["returnValues"]["5"]}</h4><br/>
+                                            {
+                                                element["returnValues"]["3"].map((item,indx2) => (
+                                                    <div className='d-flex justify-content-start'>
+                                                    <div className="p-2">    
+                                                    <label htmlFor="html">{item}</label>
+                                                    </div>
+                                                    <div className="p-2">
+                                                    <button type="button" className='btn btn-sm btn-danger' disabled={selection[index][indx2] === 0} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setSelection(selCopy)}}>-</button>
+                                                    </div>
+                                                    <div className="p-2">
+                                                    <input type="number" className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={selection[index][indx2]}/>
+                                                    </div>
+                                                    <div className="p-2">
+                                                    <button type="button" className='btn btn-sm btn-primary' disabled={getTotalCount(selection[index]) == element["returnValues"]["5"]} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setSelection(selCopy)}}>+</button><br/>
+                                                    </div>
+                                                    <br/>
+                                                    </div>
+                                                ))
+                                                
+                                            }
+                                            
+                                            <br/>
+                                            <button type="button" className='btn btn-primary btn-block' onClick={ () => {
+                                            to_vote_power(element["returnValues"]["0"],element["returnValues"]["3"],selection[index])}}
+                                            > Vote </button>
+                                            <br/><br/>
+                                        </form>
+                                    </div>
+                                    <div className='col-4'></div>
+                                </div>
+                            </div>
+                        ))
+                    :
+                    selectedNavItem === 2 ?
+                    <>
+                    <div className='col-2'></div>
+                    <div className='col-8 border border-light text-white p-5'>
+                        <h2 className='title text-white'>CREATE NEW PROPOSAL</h2>
+                        <form>
+                            <label>Proposal Text: </label>
+                            <br/>
+                            <textarea onChange={(e) => {{setProposal({...proposal, text: e.target.value})}}} style={{width:"80%", height:"80px", padding:"5px"}}/>
+                            <br/><br/>
+                            <button type="button" className='btn btn-secondary rounded-0' onClick={() => {let optionValues = proposal.options; optionValues.push(""); setProposal({...proposal, options: optionValues}); setInputList(inputList.concat(<div key={inputList.length}><br/><label>Option {inputList.length + 1}: </label><input required onChange={(e) => {let optionValues = proposal.options; optionValues[inputList.length] = e.target.value; setProposal({...proposal, options: optionValues})}} /></div>))}}>Add New Option</button>
+                            {inputList}
+                            <br/>
+                            {
+                                inputList.length === 0 ?
+                                <></>
+                                :
+                                <button type="button" className='btn btn-danger rounded-0' onClick={() => {let optionValues = proposal.options; optionValues.pop(); setProposal({...proposal, options: optionValues}); var slicedList = inputList.slice(0, inputList.length-1); setInputList(slicedList)}}>Remove Last Option</button>
+                            }
+                            <br/><br/>
+                            <label>Voting Power: </label>
+                            <input type="number" onChange={(e) => {setProposal({...proposal, voting_power: e.target.value})}}/>
+                            <br/>
+                            <br/>
+                            <button type="button" className='btn btn-primary rounded-0' onClick={() => {Create_proposal(proposal.text, proposal.options, proposal.voting_power); /*setProposal({text: "", options: [], voting_power: 0})*/}}>Create This Proposal</button>
+                            {console.log(proposal)}
+                        </form>
+                    </div>
+                    </>
+                    :
+                    selectedNavItem === 4 ?
+                    <div className='container'>
+                        <div className='row mt-5'>
+                            <div className='col-4'></div>
+                            <div className='col-2'>
+                                <button onClick={()=>Deposit_yk_tokens()} className='btn btn-primary'>Deposit YK Tokens</button>
+                            </div>
+                            <div className='col-2'>
+                                {/* <button onClick={()=>Deposit_voter_tokens()} className='button is-primary'>Deposit VK Tokens</button> */}
+                                <button onClick={()=>Deposit_voter_tokens()} className='btn btn-primary'>Deposit VK Tokens</button>
+                            </div>
+                        </div>
+                    </div>
+                    : 
+                    <></>
+                    }
                 </div>
             </div>
-        </nav>
-        <section>
-            <div className="container">
-                <h2>CREATE NEW PROPOSAL</h2>
-                <form>
-                    <label>Proposal Text: </label>
-                    <br/>
-                    <textarea onChange={(e) => {{setProposal({...proposal, text: e.target.value})}}} style={{width:"300px", height:"80px"}}/>
-                    <br/>
-                    <button type="button" onClick={() => {let optionValues = proposal.options; optionValues.push(""); setProposal({...proposal, options: optionValues}); setInputList(inputList.concat(<div key={inputList.length}><br/><label>Option {inputList.length + 1}: </label><input required onChange={(e) => {let optionValues = proposal.options; optionValues[inputList.length] = e.target.value; setProposal({...proposal, options: optionValues})}} /></div>))}}>Add New Option</button>
-                    {inputList}
-                    <br/>
-                    <label>Voting Power: </label>
-                    <input type="number" onChange={(e) => {setProposal({...proposal, voting_power: e.target.value})}}/>
-                    <br/>
-                    <br/>
-                    <button type="button" onClick={() => {Create_proposal(proposal.text, proposal.options, proposal.voting_power); /*setProposal({text: "", options: [], voting_power: 0})*/}}>Create This Proposal</button>
-                    {console.log(proposal)}
-                </form>
-            </div>
-        </section>
-
-        <section>
-            {/* <div className="text-has-danger">
-                <p>error</p>
-            </div> */}
-        <br></br>
-        <div className='container'>
-            <button onClick={()=>Deposit_yk_tokens()
-            } className='button is-primary'>Deposit YK Tokens</button>
-        </div>
-        <br/>
-        <div className='container'>
-            <button onClick={()=>Deposit_voter_tokens()
-            } className='button is-primary'>Deposit VK Tokens</button>
-        </div>
-        <br/>        
-        <div className='container'>
-            <button onClick={()=>Create_proposal()
-            
-            } className='button is-primary'>Create this proposal</button>
-        </div>
-        <br/>
-    
-            <div className='container'>
+            {/* <div className='container'>
                 <button onClick={()=>all_proposals()
             
              } className='button is-primary'>All proposals</button>
-            </div>
-     
-        <br/><br/>
-        </section>
-
-        <section>
-        <div className="container">
-        {/*selectionArrayInitialize()*/}
-        {all_props.map((element, index) => (
-            element["returnValues"]["5"] === "1" ?
-            <form key={index}>
-                <p>{element["returnValues"]["2"]}</p>
-                {
-                element["returnValues"]["3"].map((item,keyIndex) => (
-                    <div key={keyIndex}>
-                      <input type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
-                      <label htmlFor="html">{item}</label><br/>
-                    </div>
-                ))
-                }
-                <button type="button" onClick={ () => 
-                    {
-                        if(selection[index][0] === ""){
-                            alert("please select an input before submitting")
-                        }
-                        else{
-                            console.log(element["returnValues"]["0"])
-                            console.log(selection[index])
-                            to_vote_power_singular(element["returnValues"]["0"], selection[index]) 
-                        }
-                    }
-                }> Vote </button>
-                
-            </form>
-            :
-        <form key={index}>
-            <p>{element["returnValues"]["2"]}, {element["returnValues"]["5"]}</p>
-            {
-                element["returnValues"]["3"].map((item,indx2) => (
-                    <div key={indx2}>
-                      <label htmlFor="html">{item}</label>
-                      <button type="button" disabled={selection[index][indx2] === 0} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setSelection(selCopy)}}>-</button>
-                      <input type="number" id="html" name="fav_language" disabled={true} value={selection[index][indx2]}/>
-                      <button type="button" disabled={getTotalCount(selection[index]) == element["returnValues"]["5"]} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setSelection(selCopy)}}>+</button><br/>
-                    </div>
-                ))
-            }
-            <button type="button" onClick={ () => {
-            to_vote_power(element["returnValues"]["0"],element["returnValues"]["3"],selection[index])}}
-            > Vote </button>
-            
-            <br/><br/>
-        </form>
-        )
-        )}
-        </div>
-        </section>
+            </div> */}
         
-     
+        </div>
     </div>
     )
 }
