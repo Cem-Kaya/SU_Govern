@@ -4,6 +4,17 @@ import React from "react"
 import Web3 from 'web3'
 import Head from 'next/head'
 import styles from '../styles/d_try.module.css'
+import PieChart from '../components/PieChart'
+import BarChart from '../components/BarChart'
+import styled from "styled-components"
+
+const TextBoxProposal = styled.div`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+`;
 
 export default function Dao(){
     const [error,setError]=useState('')
@@ -352,84 +363,138 @@ export default function Dao(){
                     <nav className="nav nav-pills flex-column flex-sm-row">
                         <button type='button' className={selectedNavItem === 1 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(1)}}>Proposals</button>
                         <button type='button' className={selectedNavItem === 2 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(2)}}>Create A Proposal</button>
-                        <button type='button' className={selectedNavItem === 3 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(3)}}>Give Vote</button>
+                        <button type='button' className={selectedNavItem === 3 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(3)}}>Give Vote</button>
                         <button type='button' className={selectedNavItem === 4 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(4)}}>Get Tokens</button>    
                     </nav>
                 </div>
                 <div className='row mt-5'>
                     {selectedNavItem === 1 ?
-                        all_props.map((element, index) => (
-                            element["returnValues"]["5"] === "1" ?
-                            <div className='row mt-5'>
+                    all_props.map((element, index) => (
+                        element["returnValues"]["5"] === "1" ?
+                        <div className='container border border-white text-white p-5 mt-5'>
+                            <div className='row'>  
                                 <div className='col-12'>
-                                    <div className='container border border-white text-white p-5'>
-                                        <form key={index}>
-                                            <h2>{element["returnValues"]["2"]}</h2><br/>
-                                            {
-                                            element["returnValues"]["3"].map((item,keyIndex) => (
-                                                <div key={keyIndex}>
-                                                    <input type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
-                                                    <label htmlFor="html">{item}</label><br/>
-                                                </div>
-                                            ))
-                                            }
-                                            <br/>
-                                            <button type="button" className='btn btn-primary btn-block' onClick={ () => 
-                                                {
-                                                    if(selection[index][0] === ""){
-                                                        alert("please select an input before submitting")
-                                                    }
-                                                    else{
-                                                        console.log(element["returnValues"]["0"])
-                                                        console.log(selection[index])
-                                                        to_vote_power_singular(element["returnValues"]["0"], selection[index]) 
-                                                    }
-                                                }
-                                            }> Vote </button>
-                                        </form>
-                                    </div>
-                                    <div className='col-4'></div>
+                                    <label>{element["returnValues"]["2"]}</label><br/><br/>
                                 </div>
                             </div>
-                            :
-                            <div className='row mt-5'>                            
-                                <div className='col-12'>
-                                    <div className='container border border-white text-white p-5'>
-                                        <form key={index}>
-                                            <h2>{element["returnValues"]["2"]}</h2><br/>
-                                            <h4>Voting Power: {element["returnValues"]["5"]}</h4><br/>
-                                            {
-                                                element["returnValues"]["3"].map((item,indx2) => (
-                                                    <div className='d-flex justify-content-start'>
-                                                    <div className="p-2">    
-                                                    <label htmlFor="html">{item}</label>
-                                                    </div>
-                                                    <div className="p-2">
-                                                    <button type="button" className='btn btn-sm btn-danger' disabled={selection[index][indx2] === 0} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setSelection(selCopy)}}>-</button>
-                                                    </div>
-                                                    <div className="p-2">
-                                                    <input type="number" className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={selection[index][indx2]}/>
-                                                    </div>
-                                                    <div className="p-2">
-                                                    <button type="button" className='btn btn-sm btn-primary' disabled={getTotalCount(selection[index]) == element["returnValues"]["5"]} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setSelection(selCopy)}}>+</button><br/>
-                                                    </div>
-                                                    <br/>
-                                                    </div>
-                                                ))
-                                                
-                                            }
-                                            
+                            <div className='row'>
+                                <div className='col-6'>
+                                    <p>Voting Power: {element["returnValues"]["5"]}</p><br/>
+                                    <p>Options:</p><br/>
+                                    {
+                                    element["returnValues"]["3"].map((item,keyIndex) => (
+                                        <div key={keyIndex}>
+                                            <label htmlFor="html">{(keyIndex + 1) + ")  " + item + " -> " + element["returnValues"]["4"][keyIndex] + " votes"}</label>
                                             <br/>
-                                            <button type="button" className='btn btn-primary btn-block' onClick={ () => {
-                                            to_vote_power(element["returnValues"]["0"],element["returnValues"]["3"],selection[index])}}
-                                            > Vote </button>
-                                            <br/><br/>
-                                        </form>
-                                    </div>
-                                    <div className='col-4'></div>
+                                        </div>
+                                    ))
+                                    }
+                                </div>
+                                <div className='col-2'>
+                                    <PieChart chartData={{
+                                        labels: element["returnValues"]["3"],
+                                        datasets: [
+                                            {
+                                            label: "Votes",
+                                            data: element["returnValues"]["4"],
+                                            backgroundColor: [
+                                                "rgba(75,192,192,1)",
+                                                "#ecf0f1",
+                                                "#50AF95",
+                                                "#f3ba2f",
+                                                "#2a71d0",
+                                            ],
+                                            borderColor: "black",
+                                            borderWidth: 1,
+                                            },
+                                        ],
+                                        }}></PieChart>
+                                </div>
+                                <div className='col-4'>
+                                    <BarChart chartData={{
+                                        labels: element["returnValues"]["3"],
+                                        datasets: [
+                                            {
+                                            label: "Votes",
+                                            data: element["returnValues"]["4"],
+                                            backgroundColor: [
+                                                "rgba(75,192,192,1)",
+                                                "#ecf0f1",
+                                                "#50AF95",
+                                                "#f3ba2f",
+                                                "#2a71d0",
+                                            ],
+                                            borderColor: "black",
+                                            borderWidth: 1,
+                                            },
+                                        ],
+                                        }
+                                    }></BarChart>
                                 </div>
                             </div>
-                        ))
+                        </div>
+                        :
+                        <div className='container border border-white text-white p-5 mt-5'>
+                            <div className='row'>                
+                                <div className='col-12'>
+                                    <label>{element["returnValues"]["2"]}</label><br/><br/>
+                                </div>    
+                            </div>
+                            <div className='row'>
+                                <div className='col-6'>
+                                    <p>Voting Power: {element["returnValues"]["5"]}</p><br/>
+                                    <p>Options:</p><br/>
+                                    {
+                                        element["returnValues"]["3"].map((item,indx2) => (
+                                            <><label htmlFor="html">{(indx2 + 1) + ")  " + item + " -> " + element["returnValues"]["4"][indx2] + " votes"}</label><br/></>  
+                                        ))
+                                    }
+                                </div>
+                                <div className='col-2'>
+                                    <PieChart chartData={{
+                                        labels: element["returnValues"]["3"],
+                                        datasets: [
+                                            {
+                                            label: "Votes",
+                                            data: element["returnValues"]["4"],
+                                            backgroundColor: [
+                                                "rgba(75,192,192,1)",
+                                                "#ecf0f1",
+                                                "#50AF95",
+                                                "#f3ba2f",
+                                                "#2a71d0",
+                                            ],
+                                            borderColor: "black",
+                                            borderWidth: 1,
+                                            },
+                                        ],
+                                        }}></PieChart>
+                                </div>
+                                <div className='col-4'>
+                                    <BarChart chartData={{
+                                        labels: element["returnValues"]["3"],
+                                        datasets: [
+                                            {
+                                            label: "Votes",
+                                            data: element["returnValues"]["4"],
+                                            backgroundColor: [
+                                                "rgba(75,192,192,1)",
+                                                "#ecf0f1",
+                                                "#50AF95",
+                                                "#f3ba2f",
+                                                "#2a71d0",
+                                            ],
+                                            borderColor: "black",
+                                            borderWidth: 1,
+                                            },
+                                        ],
+                                        }
+                                    }></BarChart>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    ))
                     :
                     selectedNavItem === 2 ?
                     <>
@@ -460,6 +525,70 @@ export default function Dao(){
                         </form>
                     </div>
                     </>
+                :
+                selectedNavItem === 3 ?
+                    all_props.map((element, index) => (
+                        element["returnValues"]["5"] === "1" ?
+                            <div className='col-4 mt-5'>
+                                <div className='card bg-black border border-white text-white p-5'>
+                                    <TextBoxProposal>{element["returnValues"]["2"]}</TextBoxProposal><br/><br/>
+                                        {
+                                        element["returnValues"]["3"].map((item,keyIndex) => (
+                                            <div key={keyIndex}>
+                                                <input type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
+                                                <label htmlFor="html">{item}</label><br/>
+                                            </div>
+                                        ))
+                                        }
+                                        <br/>
+                                        <button type="button" className='btn btn-primary btn-block' onClick={ () => 
+                                            {
+                                                if(selection[index][0] === ""){
+                                                    alert("please select an input before submitting")
+                                                }
+                                                else{
+                                                    console.log(element["returnValues"]["0"])
+                                                    console.log(selection[index])
+                                                    to_vote_power_singular(element["returnValues"]["0"], selection[index]) 
+                                                }
+                                            }
+                                        }> Vote </button>
+                                </div>
+                        </div>
+                        :                        
+                            <div className='col-4 mt-5'>
+                                <div className='card bg-black border border-white text-white p-5'>
+                                        <TextBoxProposal>{element["returnValues"]["2"]}</TextBoxProposal><br/>
+                                        <label className='h6'>Voting Power: {element["returnValues"]["5"]}</label><br/>
+                                        {
+                                            element["returnValues"]["3"].map((item,indx2) => (
+                                                <div className='row'> 
+                                                    <div className='col-4'>
+                                                        <label htmlFor="html">{item}</label>
+                                                    </div>   
+                                                    <div className='col-8'>
+                                                        <div class="input-group mb-3">
+                                                            <div class="input-group-append">
+                                                                <button type="button" className='btn btn-danger rounded-0' disabled={selection[index][indx2] === 0} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setSelection(selCopy)}}>-</button>
+                                                            </div>
+                                                            <input type="number" className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={selection[index][indx2]}/>
+                                                            <div class="input-group-append">
+                                                                <button type="button" className='btn btn-primary rounded-0' disabled={getTotalCount(selection[index]) == element["returnValues"]["5"]} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setSelection(selCopy)}}>+</button><br/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))    
+                                        }
+                                        <br/>
+                                        <button type="button" className='btn btn-primary btn-block' onClick={ () => {
+                                        to_vote_power(element["returnValues"]["0"],element["returnValues"]["3"],selection[index])}}
+                                        > Vote </button>
+                                        <br/>
+                                    
+                                </div>
+                        </div>
+                    ))
                     :
                     selectedNavItem === 4 ?
                     <div className='container'>
