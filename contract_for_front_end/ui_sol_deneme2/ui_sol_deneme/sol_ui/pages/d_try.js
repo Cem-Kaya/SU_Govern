@@ -136,7 +136,7 @@ export default function Dao(){
  
     daoContract=new web3.eth.Contract(
         daoAPI,
-        '0x48ea49BB820AC35FFC0496044a142004e9973DbB'
+        '0x6e8f5d2635aAC0B17749395477C8A9502aa03f82'
         
 
     );
