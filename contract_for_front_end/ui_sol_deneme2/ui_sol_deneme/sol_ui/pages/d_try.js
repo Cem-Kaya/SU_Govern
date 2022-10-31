@@ -136,8 +136,8 @@ export default function Dao(){
  
     daoContract=new web3.eth.Contract(
         daoAPI,
-        '0x6e8f5d2635aAC0B17749395477C8A9502aa03f82'
-        
+        //'0x6e8f5d2635aAC0B17749395477C8A9502aa03f82'
+        '0x947F417aE44A2e27c16D0b4D774907d470b96C75'
 
     );
 };
