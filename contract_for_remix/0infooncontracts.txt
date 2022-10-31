@@ -1,0 +1,3 @@
+newDAO is the one we will build up on
+newDAO'nun yanında sayılar olursa newDAO1 vs onlar test için, eğer kesinleştirilirse newDAO olacaklar
+myDAOFACTORY şuanlık newDAO ile çalışıyor mydaofactory1 de newdao1 ile çalışıyor
