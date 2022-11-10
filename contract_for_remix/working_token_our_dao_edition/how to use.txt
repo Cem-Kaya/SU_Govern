@@ -1,0 +1,13 @@
+1) a wallet creates a factory, this person is the owner of the factory and is the first yk creator
+2) when creating a dao, first a top dao has to be created
+3) the first yk will also be the yk of this dao, this dao is the sr dao and is the top of the hiearchy
+4) when a dao is created
+	4-a) the factory becomes the owner of the dao
+	4-b) the factory gets all 1000 voter and yk tokens
+	4-c) the factory can mint as many tokens as they want the otken is mintable and the function for such stuff will be added later
+	4-d) the dao then gets allowance to use 1000 voter and yk tokens from factory
+	4-e) dao uses this allowance completely and gets all the yk and voter tokens for itself
+5) inside dao
+	5-a) the creator, yk has 1000 tokens in the mapping, he can withdraw them and deposit them (our token logic is faulty, we have to fix this)
+	soyle yapilabilir belki: iste bu yk icin ayri mapping olmus olur, insanlar bu dao ya uyeyse direk dao dan tokenlerini alirlar yada yk lar dagitir iste withdrawlayip sendlerler
+	sonrasindada direk token harcamali yeni bir logic yazabiliriz very easy olur bakalim
