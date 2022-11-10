@@ -1,0 +1,8 @@
+1) dao factory is created and the one who created is the top one
+2) create proposal is selected, dao name and symbol is typed in
+3) dao and token is created and stored in mappings in factory
+4) factory is the owner of token, dao has allowance spend all tokens from factory. all yk tokens are transferred from factory
+   to dao
+5) yk has to withdraw and deposit (why though i can deal with this i think!
+
+more later
