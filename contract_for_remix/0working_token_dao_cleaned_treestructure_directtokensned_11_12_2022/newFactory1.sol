@@ -10,6 +10,7 @@ contract DAOFactory {
 
     address public top_dao;
     mapping(MyDAO => MyDAO[]) public parent_child_daos;
+    mapping(MyDAO => uint) public num_children;
     //MyDAO[] public _child_daos;
     //address[] public dao_creators_top;
     mapping(address => bool) public is_a_dao_creator;
@@ -17,8 +18,8 @@ contract DAOFactory {
     mapping(MyDAO => ERC20) public dao_tokens_voter;
     mapping(MyDAO => address) public dao_first_yk;
     mapping(ERC20 => address) public token_first_yk;
-    mapping(MyDAO => bool) child_array_exists;
-    mapping(MyDAO => bool) dao_exists;
+    mapping(MyDAO => bool) public dao_exists;
+    mapping (MyDAO => MyDAO) public child_parent;
     event num_contracts(uint num);
     
     constructor() {
@@ -37,10 +38,10 @@ contract DAOFactory {
         MyDAO c = new MyDAO(dao_name, dao_symbol, msg.sender, yk_token, voter_token);
         //token.mint(address(c), 1000*10**18);
         //with this function my dao can use the tokens my factory has however it wishes, it is currently only 1000, can add mint later
-        //yk_token.increaseAllowance(address(c), 1000* 10**18);
-        //yk_token.increaseAllowance(address(this), 1000* 10**18);
-        //voter_token.increaseAllowance(address(c), 1000* 10**18);
-        //voter_token.increaseAllowance(address(this), 1000* 10**18);
+        yk_token.increaseAllowance(address(c), 1000* 10**18);
+        yk_token.increaseAllowance(address(this), 1000* 10**18);
+        voter_token.increaseAllowance(address(c), 1000* 10**18);
+        voter_token.increaseAllowance(address(this), 1000* 10**18);
         //we save which dao has which yk tokens and which voter tokens
 
         dao_tokens_yk[c] = yk_token;
@@ -65,10 +66,10 @@ contract DAOFactory {
         MyDAO c = new MyDAO(dao_name, dao_symbol, msg.sender, yk_token, voter_token);
         //token.mint(address(c), 1000*10**18);
         //with this function my dao can use the tokens my factory has however it wishes, it is currently only 1000, can add mint later
-        //yk_token.increaseAllowance(address(c), 1000* 10**18);
-        //yk_token.increaseAllowance(address(this), 1000* 10**18);
-        //voter_token.increaseAllowance(address(c), 1000* 10**18);
-        //voter_token.increaseAllowance(address(this), 1000* 10**18);
+        yk_token.increaseAllowance(address(c), 1000* 10**18);
+        yk_token.increaseAllowance(address(this), 1000* 10**18);
+        voter_token.increaseAllowance(address(c), 1000* 10**18);
+        voter_token.increaseAllowance(address(this), 1000* 10**18);
         //we save which dao has which yk tokens and which voter tokens
 
         dao_tokens_yk[c] = yk_token;
@@ -78,6 +79,8 @@ contract DAOFactory {
         top_dao = address(c);
         dao_exists[c] = true;
         parent_child_daos[parent].push(c);
+        num_children[parent] += 1;
+        child_parent[c] = parent;
         
         
 
