@@ -19,10 +19,10 @@ export default function Home() {
                 <nav className="navbar navbar-expand-lg navbar-dark bg-black p-2">
                   <img className="navbar-brand" width={ "48px"} src="https://previews.123rf.com/images/mingirov/mingirov1609/mingirov160900049/62776269-silver-chinese-calligraphy-translation-meaning-dao-tao-taoism-icon-on-black-background-vector-illust.jpg"/>
                 </nav>
-                <div class="input-group mb-3">
-                  <input type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2"/>
-                  <div class="input-group-append">
-                    <button class="btn btn-secondary btn-outline-white rounded-0" type="button">Button</button>
+                <div className="input-group mb-3">
+                  <input type="text" className="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2"/>
+                  <div className="input-group-append">
+                    <button className="btn btn-secondary btn-outline-white rounded-0" type="button">Button</button>
                   </div>
                 </div>
                 <div className="list-group" id="list-tab" role="tablist">
@@ -45,119 +45,119 @@ export default function Home() {
               </nav>
               <div className="row py-3">
               <div className="col-3">
-                  <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                  <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 1</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 1</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>
               <div className="col-3">
-                                <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                                <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
                     
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 2</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 2</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>
               <div className="col-3">
-                                <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                                <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
                     
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 3</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 3</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>
               <div className="col-3">
-                                <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                                <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
                     
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 4</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 4</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>
             </div>
             <div className="row py-3">
               <div className="col-3">
-                                <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                                <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 5</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 5</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>
               <div className="col-3">
-                                <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                                <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 6</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 6</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>
               <div className="col-3">
-                                <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                                <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 7</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 7</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>
               <div className="col-3">
-                                <div class="card text-white bg-dark border border-white">
-                    <div class="card-header">
+                                <div className="card text-white bg-dark border border-white">
+                    <div className="card-header">
                       <div className='container p-3'>
-                        <img class="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
+                        <img className="card-img-top rounded-circle" src="https://picsum.photos/200/200" alt="Card image cap"/>
                       </div>
                     </div>
-                    <div class="card-body">
-                    <h5 class="card-title">DAO Page 8</h5>
-                    <p class="card-text">Some quick example text.</p>
-                    <a href="#" class="btn btn-light">Go somewhere</a>
+                    <div className="card-body">
+                    <h5 className="card-title">DAO Page 8</h5>
+                    <p className="card-text">Some quick example text.</p>
+                    <a href="#" className="btn btn-light">Go somewhere</a>
                     </div>
                 </div>
               </div>

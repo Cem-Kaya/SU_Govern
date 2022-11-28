@@ -20,6 +20,7 @@ const TextBoxProposal = styled.div`
 export default function Dao(){
     const router = useRouter();
     console.log(router.query["address"]);
+    const address = router.query["address"];
     const [error,setError]=useState('')
     const [all_props,setall_props]=useState([])
     const [selection, setSelection] = useState([])
@@ -29,7 +30,7 @@ export default function Dao(){
         voting_power: 0
     });
     const [inputList, setInputList] = useState([]);
-    const [selectedNavItem, setSelectedNavItem] = useState(0);
+    const [selectedNavItem, setSelectedNavItem] = useState(2);
 
     let web3js
     let daoContract
@@ -332,50 +333,8 @@ export default function Dao(){
         return count
     }
 
-    return(
-    <div className={styles.main}>
-        <Head>
-            <title>DAO APP</title>
-            <meta name="description" content="A blockchain dao app" />
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossOrigin="anonymous"></link>
-        </Head>
-        <div className='bg-black' style={{minHeight:"100vh"}}>
-            {/* <div style={{backgroundImage: `url("https://bullekon.com/wp-content/uploads/2022/05/image-1.png")`}}> */}
-            <div className="container" style={{padding:"30px"}}>
-                <div className="row">
-                    <div className="col-4"></div>
-                    <div className="col-4">
-                        <div className="card mb-3 border border-dark">
-                            <img className="card-img-top rounded-0" src="https://redenom.com/info/wp-content/uploads/2018/10/redenom_cover_fb_1200x630_dao_1-1.png" alt="Card image cap"/>
-                            <div className="card-body">
-                                <h4 className="card-title text-center text-black">DAO</h4>
-                                <p className="card-text">This is the DAO page of ...</p>
-                                <p className="card-text"><small className="text-muted">175 members</small></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-2"></div>
-                    <div className="col-2">
-                        <button className='btn btn-block btn-danger'><a className='text-light' href='/'>Go Back to the Main Page</a></button>
-                    </div>
-                </div>
-                <div className="row mt-5">
-                    <div className="col-10"></div>
-                    <div className="col-2">
-                        <button onClick={
-                            connectWallethandler} className='btn btn-block btn-primary'>Connect Wallet</button>
-                    </div>
-                </div>
-                <div className="row mt-5">
-                    <nav className="nav nav-pills flex-column flex-sm-row">
-                        <button type='button' className={selectedNavItem === 1 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(1)}}>Proposals</button>
-                        <button type='button' className={selectedNavItem === 2 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(2)}}>Create A Proposal</button>
-                        <button type='button' className={selectedNavItem === 3 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(3)}}>Give Vote</button>
-                        <button type='button' className={selectedNavItem === 4 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(4)}}>Get Tokens</button>    
-                    </nav>
-                </div>
-                <div className='row mt-5'>
-                    {selectedNavItem === 1 ?
+    const getHTMLBody = () => {
+        return selectedNavItem === 1 ?
                     all_props.map((element, index) => (
                         element["returnValues"]["5"] === "1" ?
                         <div className='container border border-white text-white p-5 mt-5'>
@@ -507,7 +466,7 @@ export default function Dao(){
                     <>
                     <div className='col-2'></div>
                     <div className='col-8 border border-light text-white p-5'>
-                        <h2 className='title text-white'>CREATE NEW PROPOSAL</h2>
+                        <h2 className='title text-white'><u>CREATE NEW PROPOSAL</u></h2>
                         <form>
                             <label>Proposal Text: </label>
                             <br/>
@@ -546,8 +505,8 @@ export default function Dao(){
                                                 {
                                                 element["returnValues"]["3"].map((item,keyIndex) => (
                                                     <div key={keyIndex}>
-                                                        <input type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
-                                                        <label htmlFor="html">{item}</label><br/>
+                                                        <input className="form-check-input" type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
+                                                        <label className="form-check-label" htmlFor="html">{item}</label><br/>
                                                     </div>
                                                 ))
                                                 }
@@ -576,12 +535,12 @@ export default function Dao(){
                                                             <label htmlFor="html">{item}</label>
                                                         </div>   
                                                         <div className='col-8'>
-                                                            <div class="input-group mb-3">
-                                                                <div class="input-group-append">
+                                                            <div className="input-group mb-3">
+                                                                <div className="input-group-append">
                                                                     <button type="button" className='btn btn-danger rounded-0' disabled={selection[index][indx2] === 0} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setSelection(selCopy)}}>-</button>
                                                                 </div>
                                                                 <input type="number" className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={selection[index][indx2]}/>
-                                                                <div class="input-group-append">
+                                                                <div className="input-group-append">
                                                                     <button type="button" className='btn btn-primary rounded-0' disabled={getTotalCount(selection[index]) == element["returnValues"]["5"]} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setSelection(selCopy)}}>+</button><br/>
                                                                 </div>
                                                             </div>
@@ -618,15 +577,125 @@ export default function Dao(){
                     </div>
                     : 
                     <></>
-                    }
+    }
+
+    return(
+    <div className={styles.main}>
+        <Head>
+            <title>DAO APP</title>
+            <meta name="description" content="A blockchain dao app" />
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossOrigin="anonymous"></link>
+        </Head>
+        <div className='bg-black' style={{minHeight:"100vh"}}>
+            <div className="row mx-0">
+                <div className="col-2">
+                    <div className='container-fluid p-2'>
+                        <nav className="navbar navbar-expand-lg navbar-dark bg-black">
+                            <img className="navbar-brand" width={ "48px"} src="https://previews.123rf.com/images/mingirov/mingirov1609/mingirov160900049/62776269-silver-chinese-calligraphy-translation-meaning-dao-tao-taoism-icon-on-black-background-vector-illust.jpg"/>
+                            <span className="align-text-bottom mt-3">
+                                <a className="nav-link text-danger" href="/"><u>Go Back</u></a>
+                            </span>
+                        </nav>
+                        <div className="input-group mb-3">
+                            <input type="text" className="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2"/>
+                            <div className="input-group-append">
+                                <button className="btn btn-secondary btn-outline-white rounded-0" type="button">Button</button>
+                            </div>
+                        </div>
+                        <div className="list-group" id="list-tab" role="tablist">
+                            <button onClick={ connectWallethandler}  className="list-group-item list-group-item-action bg-transparent border border-white text-white mb-2" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="home">Connect Wallet</button>
+                        </div>
+                    </div>
+                    <ul className="nav flex-column my-2">
+                        <li className="nav-item">
+                            <h2 className='nav-link text-white'>Administrative</h2>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Create a SubDAO</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Assign a New YK</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Delete DAO</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#" onClick={() => {setSelectedNavItem(2)}}>Create New Proposal</a>
+                        </li>
+                    </ul>
+                    <br/><br/>
+                    <ul className="nav flex-column my-2">
+                        <li className="nav-item">
+                            <h2 className='nav-link text-white'>Member Functions</h2>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Check My Tokens</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Transfer Tokens</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className='nav-link' onClick={async() => {await all_proposals(); setSelectedNavItem(3)}}>Vote on Proposals</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#" onClick={() => {setSelectedNavItem(4)}}>Get Tokens</a>
+                        </li>
+                    </ul>
+                    <br/><br/>
+                    <ul className="nav flex-column my-2">
+                        <li className="nav-item">
+                            <h2 className='nav-link text-white'>Non-Member Functions</h2>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#" onClick={async() => {await all_proposals(); setSelectedNavItem(1)}}>View Proposals</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">View SubDAOs</a>
+                        </li>
+                    </ul>
+                    <br/><br/>
+                </div>    
+                <div className="col-9">
+                <div className="container" style={{padding:"30px"}}>
+                    <div className="row">
+                        <div className="col-4"></div>
+                        <div className="col-4">
+                            <div className="card mb-3 border border-dark">
+                                <img className="card-img-top rounded-0" src="https://redenom.com/info/wp-content/uploads/2018/10/redenom_cover_fb_1200x630_dao_1-1.png" alt="Card image cap"/>
+                                <div className="card-body">
+                                    <h4 className="card-title text-center text-black">DAO</h4>
+                                    <p className="card-text">This is the DAO page of ...</p>
+                                    <p className="card-text"><small className="text-muted">175 members</small></p>
+                                    <p className="card-text"><small className="text-muted">45 Proposals Created</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-2"></div>
+                        <div className="col-2">
+                            {/* <button className='btn btn-block btn-danger'><a className='text-light' href='/'>Go Back to the Main Page</a></button> */}
+                        </div>
+                    </div>
+                    {/* <div className="row mt-5">
+                        <div className="col-10"></div>
+                        <div className="col-2">
+                            <button onClick={
+                                connectWallethandler} className='btn btn-block btn-primary'>Connect Wallet</button>
+                        </div>
+                    </div>
+                    <div className="row mt-5">
+                        <nav className="nav nav-pills flex-column flex-sm-row">
+                            <button type='button' className={selectedNavItem === 1 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(1)}}>Proposals</button>
+                            <button type='button' className={selectedNavItem === 2 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(2)}}>Create A Proposal</button>
+                            <button type='button' className={selectedNavItem === 3 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(3)}}>Give Vote</button>
+                            <button type='button' className={selectedNavItem === 4 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(4)}}>Get Tokens</button>    
+                        </nav>
+                    </div> */}
+                    <div className='row mt-5'>
+                        {getHTMLBody()}
+                    </div>
+                </div>
                 </div>
             </div>
-            {/* <div className='container'>
-                <button onClick={()=>all_proposals()
-            
-             } className='button is-primary'>All proposals</button>
-            </div> */}
-        
         </div>
     </div>
     )
