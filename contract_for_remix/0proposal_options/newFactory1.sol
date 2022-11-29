@@ -32,13 +32,13 @@ contract DAOFactory {
 
     //so first the dao and the token will be created, factory will have the tokens and dao will have the allowance to use 
     //these tokens, the yk will be able to withdraw, send and deposit yk_tokens
-    function createDAOTop( string memory dao_name,  string memory dao_symbol, string memory yk_token_name, string memory yk_token_symbol, string memory voter_token_name, string memory voter_token_symbol) public {
+    function createDAOTop( string memory dao_name,  string memory dao_description, string memory yk_token_name, string memory yk_token_symbol, string memory voter_token_name, string memory voter_token_symbol) public {
         require(is_a_dao_creator[msg.sender] == true, 'Not added as a DAO Creator');
         //line below mints 1000 tokens to this factory, also makes factory the owner of these tokens
  
         SUToken yk_token = new SUToken(yk_token_name, yk_token_symbol, address(this));
         SUToken voter_token = new SUToken(voter_token_name, voter_token_symbol, address(this));
-        MyDAO c = new MyDAO(dao_name, dao_symbol, msg.sender, yk_token, voter_token, this);
+        MyDAO c = new MyDAO(dao_name, dao_description, msg.sender, yk_token, voter_token, this);
         //token.mint(address(c), 1000*10**18);
         //with this function my dao can use the tokens my factory has however it wishes, it is currently only 1000, can add mint later
         yk_token.increaseAllowance(address(c), 1000* 10**18);
@@ -64,13 +64,13 @@ contract DAOFactory {
     }
 
 
-    function createChildDAO( MyDAO parent, string memory dao_name,  string memory dao_symbol, string memory yk_token_name, string memory yk_token_symbol, string memory voter_token_name, string memory voter_token_symbol) public {
-        require(dao_tokens_yk[parent].balanceOf(msg.sender) >= 0, 'Not a YK of parent DAO');
+    function createChildDAO( MyDAO parent, string memory dao_name,  string memory dao_description, string memory yk_token_name, string memory yk_token_symbol, string memory voter_token_name, string memory voter_token_symbol) public {
+        require(dao_tokens_yk[parent].balanceOf(msg.sender) > 0, 'Not a YK of parent DAO');
         //line below mints 1000 tokens to this factory, also makes factory the owner of these tokens
  
         SUToken yk_token = new SUToken(yk_token_name, yk_token_symbol, address(this));
         SUToken voter_token = new SUToken(voter_token_name, voter_token_symbol, address(this));
-        MyDAO c = new MyDAO(dao_name, dao_symbol, msg.sender, yk_token, voter_token, this);
+        MyDAO c = new MyDAO(dao_name, dao_description, msg.sender, yk_token, voter_token, this);
         //token.mint(address(c), 1000*10**18);
         //with this function my dao can use the tokens my factory has however it wishes, it is currently only 1000, can add mint later
         yk_token.increaseAllowance(address(c), 1000* 10**18);

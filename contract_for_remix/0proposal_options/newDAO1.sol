@@ -9,11 +9,10 @@ import "./newFactory1.sol";
 
 
 contract MyDAO {
-    string dao_name;
-    string dao_symbol;
+    string public dao_name;
+    string public dao_description;
     enum VotingOptions { Yes, No }
     enum Status { Accepted, Rejected, Pending }
-    string DAO_NAME;
     
 
     
@@ -67,10 +66,10 @@ contract MyDAO {
     
     mapping(address => bool) transferLock;
 
-    constructor(string memory _dao_name, string memory _dao_symbol, address first_yk, SUToken yk_token_in, SUToken voter_token_in, DAOFactory _factory) {
+    constructor(string memory _dao_name, string memory _dao_description, address first_yk, SUToken yk_token_in, SUToken voter_token_in, DAOFactory _factory) {
         factory = _factory;
         dao_name = _dao_name;
-        dao_symbol = _dao_symbol;
+        dao_description = _dao_description;
         yk_token = yk_token_in; // AVAX address
         voter_token = voter_token_in;
 
