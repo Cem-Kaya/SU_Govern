@@ -352,6 +352,24 @@ contract MyDAO {
         }
         return mypropvotenums;
     }    
+
+    function getProposalPower(uint proposal_idd) public view returns (uint ){
+        //string[][] propoptions;
+        uint myproppower = 0;
+        //string[][] propvotes;
+        myproppower = proposals[proposal_idd].power;
+
+        return myproppower;
+    }     
+
+    function getProposalType(uint proposal_idd) public view returns (string memory){
+        //string[][] propoptions;
+        
+        //string[][] propvotes;
+        string memory myproppower = proposals[proposal_idd].proposal_info_type;
+
+        return myproppower;
+    }          
 }                   
 
 
