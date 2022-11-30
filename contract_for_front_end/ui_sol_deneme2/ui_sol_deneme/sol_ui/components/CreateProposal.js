@@ -29,7 +29,6 @@ const CreateProposal = ({onCreateProposal}) => {
             <br/>
             <br/>
             <button type="button" className='btn btn-primary rounded-0' onClick={() => {onCreateProposal(proposal.current.text, proposal.current.options, proposal.current.voting_power); /*setProposal({text: "", options: [], voting_power: 0})*/}}>Create This Proposal</button>
-            {console.log(proposal.current)}
         </form>
     </div>
     </>

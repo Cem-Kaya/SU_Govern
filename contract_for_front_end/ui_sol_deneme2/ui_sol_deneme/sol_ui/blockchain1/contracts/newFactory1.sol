@@ -85,7 +85,6 @@ contract DAOFactory {
         dao_tokens_voter[c] = voter_token;
         dao_first_yk[c] = msg.sender;
         token_first_yk[yk_token] = msg.sender;
-        top_dao = address(c);
         dao_exists[c] = true;
         parent_child_daos[parent].push(c);
         num_children[parent] += 1;

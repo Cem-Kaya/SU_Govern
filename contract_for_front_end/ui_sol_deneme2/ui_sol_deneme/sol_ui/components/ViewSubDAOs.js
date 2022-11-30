@@ -18,7 +18,7 @@ const ViewSubDAOs = ({onGetSubDAOs, onGetParentDAO}) => {
     }, []);
 
   return (
-    <>
+    <>z
     {
         parentDAO==="0x0000000000000000000000000000000000000000" ?
         <div className='container'>

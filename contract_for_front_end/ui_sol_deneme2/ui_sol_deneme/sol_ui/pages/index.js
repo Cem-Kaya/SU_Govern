@@ -21,10 +21,8 @@ export default function Home() {
       if (!isInitialized) {
           await init();
       }
-      console.log(daoFactoryContract.methods)
       let nextDaoId
       await daoFactoryContract.methods.next_dao_id().call().then((result) => {nextDaoId = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
-      console.log(nextDaoId)
       return nextDaoId;
     }
   
@@ -36,13 +34,12 @@ export default function Home() {
       let provider = window.ethereum;
       let daoABI = dataDAO["abi"]
       const web3 = new Web3(provider);
-      await daoFactoryContract.methods.top_dao().call().then((result) => {console.log(result); setTopDAOAddress(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+      await daoFactoryContract.methods.top_dao().call().then((result) => {setTopDAOAddress(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
       let allDaos = []
       
       for(let i = 0; i < numOfDaos; i++) {
         let daoAddress, daoName, daoDescription
         await daoFactoryContract.methods.all_daos(i).call().then((result) => {daoAddress = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
-        console.log(daoAddress)
         let daoContract = new web3.eth.Contract(daoABI, daoAddress)
         await daoContract.methods.dao_name().call().then((result) => {daoName = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         await daoContract.methods.dao_description().call().then((result) => {daoDescription = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
@@ -81,7 +78,6 @@ export default function Home() {
               .request({ method: 'eth_requestAccounts' })
               .then((accounts) => {
                   selectedAccount = accounts[0];
-                  console.log(`Selected account is ${selectedAccount}`);
               })
               .catch((err) => {
                   setAlertMessage({text: err.message, title: "Error"});
@@ -91,23 +87,21 @@ export default function Home() {
   
           window.ethereum.on('accountsChanged', function (accounts) {
               selectedAccount = accounts[0];
-              console.log(`Selected account changed to ${selectedAccount}`);
+              setAlertMessage({text: `Selected account changed to ${selectedAccount}`, title: "Warning"});
+              setPopupTrigger(true);
           });
       }
   
       const web3 = new Web3(provider);
   
       let daoFactoryABI=dataFactory["abi"]
-      console.log(daoFactoryABI)
       
       daoFactoryContract=new web3.eth.Contract(
         daoFactoryABI,
-        '0x3053673673a1f5c0447EDC903d9eF1d684Ab2BAd'
+        '0x75824759C71Ca4C2F2C2fecCe608F15cfCfF3feB'
       );
       isInitialized = true;
   };
-
-  console.log(all_daos)
 
   return (
     <div>
@@ -158,7 +152,7 @@ export default function Home() {
                               </div>
                             </div>
                             <div className="card-body">
-                            <h5 className="card-title">{dao[1]}{console.log(topDAOAddress)}{topDAOAddress == dao[0] ? " (top dao)" : ""}</h5>
+                            <h5 className="card-title">{dao[1]}{topDAOAddress == dao[0] ? " (top dao)" : ""}</h5>
                             <p className="card-text">{dao[2]}</p>
                             <a href={`/dao?address=${dao[0]}`} className="btn btn-light">Go to the DAO Page</a>
                             </div>

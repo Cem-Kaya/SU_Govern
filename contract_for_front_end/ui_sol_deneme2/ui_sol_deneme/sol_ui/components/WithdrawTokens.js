@@ -14,12 +14,10 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
     fetchVoterShares();
   }, []);
 
-  console.log("voterSharesToBeGiven: ", voterShares);
-  console.log("ykSharesToBeGiven: ", ykShares);
   return (
   <>
       <span className="title text-white" id="inputGroup-sizing-default">Withdraw YK Tokens</span>
-      <label className='text-white'>Withdrawable Amount: {ykShares}</label>
+      <label className='text-white'>Withdrawable Amount: {ykShares / Math.pow(10, 18)}</label>
       <br/><br/>
       <div className="input-group mb-3">
         <label className='text-white'>Number of Tokens: </label>
@@ -29,7 +27,7 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
       <br/><br/>
 
       <span className="title text-white" id="inputGroup-sizing-default">Withdraw Voter Tokens</span>
-      <label className='text-white'>Withdrawable Amount: {voterShares}</label>
+      <label className='text-white'>Withdrawable Amount: {voterShares / Math.pow(10, 18)}</label>
       <br/><br/>
       <div className="input-group mb-3">
         <label className='text-white'>Number of Tokens: </label>

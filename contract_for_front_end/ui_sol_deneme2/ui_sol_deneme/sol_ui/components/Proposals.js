@@ -15,7 +15,6 @@ const Proposals = ({all_proposals}) => {
     :
     all_proposals.map((element, index) => (
         <div key={index} className='container border border-white text-white p-5 mt-5'>
-            {console.log(element)}
             <div className='row'>  
                 <div className='col-12'>
                     <label>{element[index][0]}</label><br/><br/>
