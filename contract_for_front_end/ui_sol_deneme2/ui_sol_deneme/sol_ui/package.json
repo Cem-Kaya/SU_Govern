@@ -10,6 +10,7 @@
     "compile": "solcjs --abi --include-path node_modules/ --base-path . blockchain/contracts/myDao.sol --output-dir blockchain/build"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^4.8.0",
     "bulma": "^0.9.4",
     "chart.js": "^3.9.1",
     "next": "^12.3.2",

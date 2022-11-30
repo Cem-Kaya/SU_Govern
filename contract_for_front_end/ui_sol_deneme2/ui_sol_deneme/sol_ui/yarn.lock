@@ -445,6 +445,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
+"@openzeppelin/contracts@^4.8.0":
+  "integrity" "sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw=="
+  "resolved" "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.8.0.tgz"
+  "version" "4.8.0"
+
 "@rushstack/eslint-patch@^1.1.3":
   "integrity" "sha512-WiBSI6JBIhC6LRIsB2Kwh8DsGTlbBU+mLRxJmAe3LjHTdkDpwIbEOZgoXBbZilk/vlfjK8i6nKRAvIRn1XaIMw=="
   "resolved" "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.1.3.tgz"
@@ -2533,6 +2538,13 @@
     "has-to-string-tag-x" "^1.2.0"
     "is-object" "^1.0.1"
 
+"jest-coverage-badges@^1.1.2":
+  "integrity" "sha512-44A7i2xR6os8+fWk8ZRM6W4fKiD2jwKOLU9eB3iTIIWACd9RbdvmiCNpQZTOsUBhKvz7aQ/ASFhu5JOEhWUOlg=="
+  "resolved" "https://registry.npmjs.org/jest-coverage-badges/-/jest-coverage-badges-1.1.2.tgz"
+  "version" "1.1.2"
+  dependencies:
+    "mkdirp" "0.5.1"
+
 "js-sha3@^0.5.7":
   "integrity" "sha1-DU/9gALVMzqrr0oj7tL2N0yfKOc="
   "resolved" "https://registry.npmjs.org/js-sha3/-/js-sha3-0.5.7.tgz"
@@ -2801,6 +2813,11 @@
   "resolved" "https://registry.npmjs.org/minimist/-/minimist-1.2.6.tgz"
   "version" "1.2.6"
 
+"minimist@0.0.8":
+  "integrity" "sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q=="
+  "resolved" "https://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz"
+  "version" "0.0.8"
+
 "minipass@^2.6.0", "minipass@^2.9.0":
   "integrity" "sha512-wxfUjg9WebH+CUDX/CdbRlh5SmfZiy/hpkxaRI16Y9W56Pa75sWgd/rvFilSgrauD9NyFymP/+JFV3KwzIsJeg=="
   "resolved" "https://registry.npmjs.org/minipass/-/minipass-2.9.0.tgz"
@@ -2834,6 +2851,13 @@
   "version" "0.5.6"
   dependencies:
     "minimist" "^1.2.6"
+
+"mkdirp@0.5.1":
+  "integrity" "sha512-SknJC52obPfGQPnjIkXbmA6+5H15E+fR+E4iR2oQ3zzCLbd7/ONua69R/Gw7AgkTLsRG+r5fzksYwWe1AgTyWA=="
+  "resolved" "https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.1.tgz"
+  "version" "0.5.1"
+  dependencies:
+    "minimist" "0.0.8"
 
 "mock-fs@^4.1.0":
   "integrity" "sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw=="

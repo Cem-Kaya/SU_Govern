@@ -1,64 +1,61 @@
 import 'bulma/css/bulma.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import React from "react"
 import Web3 from 'web3'
 import Head from 'next/head'
 import styles from '../styles/d_try.module.css'
-import PieChart from '../components/PieChart'
-import BarChart from '../components/BarChart'
-import styled from "styled-components"
 import { useRouter } from "next/dist/client/router"
-
-const TextBoxProposal = styled.div`
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
-`;
+import Proposals from '../components/Proposals'
+import CreateProposal from '../components/CreateProposal'
+import VoteOnProposals from '../components/VoteOnProposals'
+import WithdrawTokens from '../components/WithdrawTokens'
+import SendVoterToken from '../components/SendVoterToken'
+import SendYKToken from '../components/SendYKToken'
+import TransferTokens from '../components/TransferTokens'
+import ViewSubDAOs from '../components/ViewSubDAOs'
+import CreateChildDAO from '../components/CreateChildDAO'
+import Popup from '../components/Popup'
 
 export default function Dao(){
     const router = useRouter();
-    console.log(router.query["address"]);
     const address = router.query["address"];
-    const [error,setError]=useState('')
-    const [all_props,setall_props]=useState([])
+    const [alertMessage,setAlertMessage]=useState({text: "", title: ""})
+    const [popupTrigger, setPopupTrigger] = useState(false)
+    const [all_props,setall_proposals]=useState([])
     const [selection, setSelection] = useState([])
-    const [proposal, setProposal] = useState({
-        text: "", 
-        options: [],
-        voting_power: 0
-    });
-    const [inputList, setInputList] = useState([]);
-    const [selectedNavItem, setSelectedNavItem] = useState(2);
+    const [selectedNavItem, setSelectedNavItem] = useState(10);
+    const dataDAO = require('../blockchain1/build/contracts/MyDAO.json');
+    const dataToken = require('../blockchain1/build/contracts/SUToken.json');
+    const dataFactory = require('../blockchain1/build/contracts/DAOFactory.json');
 
     let web3js
     let daoContract
+    let voterToken
+    let ykToken
     let selectedAccount
+    let daoFactoryContract
     
     let isInitialized = false;
     const connectWallethandler= async ()=>{
-      // const [error,setError]=useState('')
-       //const [x,setx]=useState(-1)
-       
-      
        if(typeof window !=="undefined" && typeof window.ethereum !== "undefined"){
            try {
-           window.ethereum.request({method: "eth_requestAccounts"})
-           web3js =new Web3(window.ethereum)}
-
+            window.ethereum.request({method: "eth_requestAccounts"})
+            web3js =new Web3(window.ethereum)
+            setAlertMessage({text: "Successfully connected to a wallet", title: "Success"});
+            setPopupTrigger(true);
+           }
            catch(err){
-               setError(err.message)
+                setAlertMessage({text: err.message, title: "Error"})
+                setPopupTrigger(true)
            }
         }
-   
-
-       
        else{
-           console.log("please install Metamesk")
+            setAlertMessage({text: "Please install Metamask", title: "Error"})
+            setPopupTrigger(true)
        }
 
     }
+
     const init = async () => {
         let provider = window.ethereum;
     
@@ -70,13 +67,15 @@ export default function Dao(){
                     console.log(`Selected account is ${selectedAccount}`);
                 })
                 .catch((err) => {
-                    console.log(err);
+                    setAlertMessage({text: err.message, title: "Error"});
+                    setPopupTrigger(true);
                     return;
                 });
     
             window.ethereum.on('accountsChanged', function (accounts) {
                 selectedAccount = accounts[0];
-                console.log(`Selected account changed to ${selectedAccount}`);
+                setAlertMessage({text: `Selected account changed to ${selectedAccount}`, title: "Error"})
+                setPopupTrigger(true)
             });
         }
     
@@ -89,97 +88,39 @@ export default function Dao(){
         // 	NFTContractBuild.networks[networkId].address
         // );
     
-   // web3 = new Web3(window.ethereum);
-    let daoAPI=[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
-    {"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},
-    {"indexed":false,"internalType":"address","name":"author","type":"address"},
-    {"indexed":false,"internalType":"string","name":"name","type":"string"},
-    {"indexed":false,"internalType":"string[]","name":"options","type":"string[]"},
-    {"indexed":false,"internalType":"uint256[]","name":"num_options","type":"uint256[]"},
-    {"indexed":false,"internalType":"uint256","name":"power","type":"uint256"},
-    {"indexed":false,"internalType":"uint256","name":"proposal_info_type","type":"uint256"}],"name":"proposal_info","type":"event"},
-    {"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"}],"name":"accept_proposal","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"string","name":"name","type":"string"},
-    {"internalType":"string[]","name":"_options","type":"string[]"},
-    {"internalType":"uint256[]","name":"_options_num","type":"uint256[]"},
-    {"internalType":"uint256","name":"_power","type":"uint256"}],"name":"createProposal","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit_voter","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit_voter_tokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit_yk","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit_yk_tokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[],"name":"iterate_proposals","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[],"name":"nextProposalId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"}],"name":"pending_proposal","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},
-    {"internalType":"address","name":"author","type":"address"},
-    {"internalType":"string","name":"name","type":"string"},
-    {"internalType":"uint256","name":"createdAt","type":"uint256"},
-    {"internalType":"enum MyDAO.Status","name":"status","type":"uint8"},
-    {"internalType":"uint256","name":"power","type":"uint256"},
-    {"internalType":"uint256","name":"proposal_info_type","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"}],"name":"reject_proposal","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"address","name":"","type":"address"},
-    {"internalType":"uint256","name":"","type":"uint256"}],"name":"tokens_not_refunded","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
-    {"inputs":[],"name":"totalShares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[],"name":"total_voter_shares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[],"name":"total_yk_shares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_proposalId","type":"uint256"},
-    {"internalType":"string[]","name":"_vote","type":"string[]"},
-    {"internalType":"uint256[]","name":"_power","type":"uint256[]"}],"name":"vote_power","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voter_shares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[],"name":"voter_token","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-    {"inputs":[{"internalType":"address","name":"","type":"address"},
-    {"internalType":"uint256","name":"","type":"uint256"}],"name":"votes","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw_voter","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw_voter_tokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw_yk","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw_yk_tokens","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"yk_shares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[],"name":"yk_token","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
-    
- 
-    daoContract=new web3.eth.Contract(
-        daoAPI,
-        '0x6e8f5d2635aAC0B17749395477C8A9502aa03f82'
-        //'0x947F417aE44A2e27c16D0b4D774907d470b96C75'
+        //web3 = new Web3(window.ethereum);
+        let daoABI=dataDAO["abi"]
+        
+        daoContract=new web3.eth.Contract(
+            daoABI,
+            address
+            //'0x6e8f5d2635aAC0B17749395477C8A9502aa03f82'
+            //'0x947F417aE44A2e27c16D0b4D774907d470b96C75'
+        );
 
-    );
-};
-    const Deposit_yk_tokens =async ()=> {
+        let daoFactoryABI=dataFactory["abi"]
         
-        if (!isInitialized) {
-            await init();
-        }
-        
-        await daoContract.methods.deposit_yk_tokens(25).send({from: selectedAccount})
-        return 0;
-        
+        daoFactoryContract=new web3.eth.Contract(
+          daoFactoryABI,
+          '0x3053673673a1f5c0447EDC903d9eF1d684Ab2BAd'
+        );
 
-    }
-
-    const Deposit_voter_tokens =async ()=> {
+        isInitialized = true;
         
-        if (!isInitialized) {
-            await init();
-        }
-        
-        await daoContract.methods.deposit_voter_tokens(1).send({from: selectedAccount})
-        return 0;
-        
-
-    }
-
-    const create_proposal =async ()=> {
-        
-        if (!isInitialized) {
-            await init();
-        }
-        
-        await daoContract.methods.createProposal2("Dogs or Cats",["Dogs","Cat"], [0,0]).send({from: selectedAccount})
-        return 0;
-        
-
-    }
+        // let ykTokenAddress, voterTokenAddress;
+        // await daoContract.methods.voter_token().call().then((result)=>{ voterTokenAddress=result}).catch((err)=>{console.log(err)})
+        // await daoContract.methods.yk_token().call().then((result)=>{ ykTokenAddress=result}).catch((err)=>{console.log(err)})
+        // console.log(voterTokenAddress)
+        // console.log(ykTokenAddress)
+        // voterToken = new web3.eth.Contract(
+        //     dataToken["abi"],
+        //     voterTokenAddress
+        // );
+        // ykToken = new web3.eth.Contract(
+        //     dataToken["abi"],
+        //     ykTokenAddress
+        // );
+    };
 
     const Create_proposal =async (name, vote, power)=> {
         
@@ -192,391 +133,182 @@ export default function Dao(){
         {
             initial_votes.push(0);
         }
-        
-        console.log(name)
-        console.log(vote)
-        console.log(power)
-        console.log(initial_votes)
-        await daoContract.methods.createProposal(name,vote, initial_votes, power).send({from: selectedAccount})
+
+        await daoContract.methods.createProposal(name,vote, initial_votes, power, 0).send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully created a proposal", title: "Success"}); setPopupTrigger(true)}).catch(() => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return 0;
-        
-
     }    
-    
 
-    
-
-
-
-
-    const to_vote_power =async (id,vote,vote_power)=> {
+    const to_vote_power = async (id,vote,vote_power) => {
         if (!isInitialized) {
             await init();
         }        
+        await daoContract.methods.vote_power(id, vote, vote_power).send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         
-        /**await let x = daoContract.methods.nextProposalId().call()
-         *         var x = await daoContract.methods.iterate_proposals2().send({from: selectedAccount})
-                 var x = await daoContract.methods.proposals2(0).call()
-        */
-        // var myId = ToUint32(id)
-        // var myVote = vote.toString()
-        // console.log(id.type)
-        // console.log(id)
-        // console.log(myId.type)
-        // console.log(myId)
-
-        // console.log(vote.type)
-        // console.log(vote)   
-        // console.log(myVote.type)
-        // console.log(myVote)
-        //var x = await daoContract.methods.iterate_proposals2().send({from: selectedAccount})
-        
-        await daoContract.methods.vote_power(id, vote, vote_power).send({from: selectedAccount})
-        
-        //console.log(x['events']['proposal_info2'])
-       
-       // console.log(daoContract.methods.proposals(x-1).call())
         return 0;
-        
+    }
 
-    }    
-    
-    const to_vote_power_singular =async (id, vote)=> {
-        if (!isInitialized) {
-            await init();
-        }        
-        
-        /**await let x = daoContract.methods.nextProposalId().call()
-         *         var x = await daoContract.methods.iterate_proposals2().send({from: selectedAccount})
-                 var x = await daoContract.methods.proposals2(0).call()
-        */
-        // var myId = ToUint32(id)
-        // var myVote = vote.toString()
-        // console.log(id.type)
-        // console.log(id)
-        // console.log(myId.type)
-        // console.log(myId)
-
-        // console.log(vote.type)
-        // console.log(vote)   
-        // console.log(myVote.type)
-        // console.log(myVote)
-        //var x = await daoContract.methods.iterate_proposals2().send({from: selectedAccount})
-        console.log(id)
-        console.log(vote)
-        await daoContract.methods.vote_power(id, vote, [1]).send({from: selectedAccount})
-        
-        //console.log(x['events']['proposal_info2'])
-       
-       // console.log(daoContract.methods.proposals(x-1).call())
-        return 0;
-        
-
-    }  
-
-    
-
-
-
-    const all_proposals =async ()=> {
+    const all_proposals = async ()=> {
         
         if (!isInitialized) {
             await init();
         }
+        var proposalNames
+        await daoContract.methods.getProposalName().call().then((result) => {proposalNames = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         
-        /**await let x = daoContract.methods.nextProposalId().call()
-         *         var x = await daoContract.methods.iterate_proposals2().send({from: selectedAccount})
-                 var x = await daoContract.methods.proposals2(0).call()
-        */
+        console.log(daoContract.methods)
+        var proposals = []
+        proposalNames.forEach((name, index) => {
+            var proposal = {}
+            proposal[index] = [name]
+            proposals.push(proposal)
+        })
+        for (var i = 0; i < proposalNames.length; i++) {
+            await daoContract.methods.getProposalVoteNames(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+            await daoContract.methods.getProposalVoteNumbers(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+            await daoContract.methods.getProposalPower(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+            await daoContract.methods.getProposalType(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+            await daoContract.methods.votes(selectedAccount, i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        }
         
-        
-       
-        var x = await daoContract.methods.iterate_proposals().send({from: selectedAccount})
-        
-        //console.log(x['events']['proposal_info2'])
-        console.log(x)
-        x=x['events']['proposal_info']
-        setall_props(x)
-        setSelection(selectionArrayInitialize(x))
-        console.log(selection)
-       // console.log(daoContract.methods.proposals(x-1).call())
-        console.log(x)
+        console.log(proposals)
+        setall_proposals(proposals)
+        setSelection(selectionArrayInitialize(proposals))
         return 0;
     }    
 
+    const SendVoterTokens = async (address, amount) => {
+        if (!isInitialized) {
+            await init();
+        }
+        await daoContract.methods.send_voter_tokens_to_address_yk_directly(address, amount).send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully send tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+    }
+
+    const SendYKTokens = async (address, amount) => {
+        if (!isInitialized) {
+            await init();
+        }
+        await daoContract.methods.send_yk_tokens_to_address_yk_directly(address, amount).send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully send tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+    }
+
+    // const TransferVoterTokens = async (address, amount) => {
+    //     if (!isInitialized) {
+    //         await init();
+    //     }
+    //     await voterToken.methods.transfer(address, amount).send({from: selectedAccount}).then(() => {console.log("successfully made transfer")}).catch((err) => {console.log(err)})
+    // }
+
     const selectionArrayInitialize = (x) => {
         let selectionInitializer = []
-        console.log(x)
         for(var i = 0; i < x.length; i++){
-            if(x[i]["returnValues"]["5"] === "1"){
-                console.log(selectionInitializer)
+            // if(x[i]["returnValues"]["5"] === "1"){
+            //     console.log(selectionInitializer)
+            //     selectionInitializer.push([])
+            //     selectionInitializer[i].push("")
+            // }
+            // else{
                 selectionInitializer.push([])
-                selectionInitializer[i].push("")
-            }
-            else{
-                console.log(selectionInitializer)
-                selectionInitializer.push([])
-                for(var j = 0; j < x[i]["returnValues"]["3"].length; j++){
-                    console.log(selectionInitializer)
+                console.log(x[i])
+                console.log(x[i][i][1])
+                for(var j = 0; j < x[i][i][1].length; j++){
                     selectionInitializer[i].push(0)
                 }
-            }
+            //}
         }
         return selectionInitializer
     }
 
-    const getTotalCount = (slctArray) => {
-        let count = 0
-        for(var i = 0; i < slctArray.length; i++){
-            count += slctArray[i]
+    const GetSubDAOs = async () => {
+        if (!isInitialized) {
+            await init();
         }
-        return count
+        let numChildren
+        await daoFactoryContract.methods.num_children(address).call().then((result) => {numChildren = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+
+        let subDAOs = []
+        for (var i = 0; i < numChildren; i++) {
+            await daoFactoryContract.methods.parent_child_daos(address, i).call().then((result) => {subDAOs.push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        }
+        return subDAOs
+    }
+
+    const GetParentDAO = async () => {
+        if (!isInitialized) {
+            await init();
+        }
+        let parentDAOAddress
+        await daoFactoryContract.methods.child_parent(address).call().then((result) => {parentDAOAddress = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+
+        return parentDAOAddress
+    }
+
+    const WithdrawYKTokens = async (amount) => {
+        if (!isInitialized) {
+            await init();
+        }
+        await daoContract.methods.withdraw_yk_tokens(amount).send({from: selectedAccount}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+    }
+
+    const WithdrawVoterTokens = async (amount) => {
+        if (!isInitialized) {
+            await init();
+        }
+        await daoContract.methods.withdraw_voter_tokens(amount).send({from: selectedAccount}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Error"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+    }
+
+    const GetYKSharesToBeGiven = async () => {
+        if (!isInitialized) {
+            await init();
+        }
+        let shares
+        await daoContract.methods.yk_shares_to_be_given(selectedAccount).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        return shares
+    }
+
+    const GetVoterSharesToBeGiven = async () => {
+        if (!isInitialized) {
+            await init();
+        }
+        let shares
+        await daoContract.methods.voter_shares_to_be_given(selectedAccount).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        return shares
+    }
+
+    const CreateChildDAOFunc = async (name, description, ykTokenName, ykTokenSymbol, voterTokenName, voterTokenSymbol) => {
+        if (!isInitialized) {
+            await init();
+        }
+        await daoFactoryContract.methods.createChildDAO(address, name, description, ykTokenName, ykTokenSymbol, voterTokenName, voterTokenSymbol).send({from: selectedAccount}).then(() => {setAlertMessage({text: "successfully created child DAO", title: "Error"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
     const getHTMLBody = () => {
-        return selectedNavItem === 1 ?
-                    all_props.map((element, index) => (
-                        element["returnValues"]["5"] === "1" ?
-                        <div className='container border border-white text-white p-5 mt-5'>
-                            <div className='row'>  
-                                <div className='col-12'>
-                                    <label>{element["returnValues"]["2"]}</label><br/><br/>
-                                </div>
-                            </div>
-                            <div className='row'>
-                                <div className='col-6'>
-                                    <p>Voting Power: {element["returnValues"]["5"]}</p><br/>
-                                    <p>Options:</p><br/>
-                                    {
-                                    element["returnValues"]["3"].map((item,keyIndex) => (
-                                        <div key={keyIndex}>
-                                            <label htmlFor="html">{(keyIndex + 1) + ")  " + item + " -> " + element["returnValues"]["4"][keyIndex] + " votes"}</label>
-                                            <br/>
-                                        </div>
-                                    ))
-                                    }
-                                </div>
-                                <div className='col-2'>
-                                    <PieChart chartData={{
-                                        labels: element["returnValues"]["3"],
-                                        datasets: [
-                                            {
-                                            label: "Votes",
-                                            data: element["returnValues"]["4"],
-                                            backgroundColor: [
-                                                "rgba(75,192,192,1)",
-                                                "#ecf0f1",
-                                                "#50AF95",
-                                                "#f3ba2f",
-                                                "#2a71d0",
-                                            ],
-                                            borderColor: "black",
-                                            borderWidth: 1,
-                                            },
-                                        ],
-                                        }}></PieChart>
-                                </div>
-                                <div className='col-4'>
-                                    <BarChart chartData={{
-                                        labels: element["returnValues"]["3"],
-                                        datasets: [
-                                            {
-                                            label: "Votes",
-                                            data: element["returnValues"]["4"],
-                                            backgroundColor: [
-                                                "rgba(75,192,192,1)",
-                                                "#ecf0f1",
-                                                "#50AF95",
-                                                "#f3ba2f",
-                                                "#2a71d0",
-                                            ],
-                                            borderColor: "black",
-                                            borderWidth: 1,
-                                            },
-                                        ],
-                                        }
-                                    }></BarChart>
-                                </div>
-                            </div>
-                        </div>
-                        :
-                        <div className='container border border-white text-white p-5 mt-5'>
-                            <div className='row'>                
-                                <div className='col-12'>
-                                    <label>{element["returnValues"]["2"]}</label><br/><br/>
-                                </div>    
-                            </div>
-                            <div className='row'>
-                                <div className='col-6'>
-                                    <p>Voting Power: {element["returnValues"]["5"]}</p><br/>
-                                    <p>Options:</p><br/>
-                                    {
-                                        element["returnValues"]["3"].map((item,indx2) => (
-                                            <><label htmlFor="html">{(indx2 + 1) + ")  " + item + " -> " + element["returnValues"]["4"][indx2] + " votes"}</label><br/></>  
-                                        ))
-                                    }
-                                </div>
-                                <div className='col-2'>
-                                    <PieChart chartData={{
-                                        labels: element["returnValues"]["3"],
-                                        datasets: [
-                                            {
-                                            label: "Votes",
-                                            data: element["returnValues"]["4"],
-                                            backgroundColor: [
-                                                "rgba(75,192,192,1)",
-                                                "#ecf0f1",
-                                                "#50AF95",
-                                                "#f3ba2f",
-                                                "#2a71d0",
-                                            ],
-                                            borderColor: "black",
-                                            borderWidth: 1,
-                                            },
-                                        ],
-                                        }}></PieChart>
-                                </div>
-                                <div className='col-4'>
-                                    <BarChart chartData={{
-                                        labels: element["returnValues"]["3"],
-                                        datasets: [
-                                            {
-                                            label: "Votes",
-                                            data: element["returnValues"]["4"],
-                                            backgroundColor: [
-                                                "rgba(75,192,192,1)",
-                                                "#ecf0f1",
-                                                "#50AF95",
-                                                "#f3ba2f",
-                                                "#2a71d0",
-                                            ],
-                                            borderColor: "black",
-                                            borderWidth: 1,
-                                            },
-                                        ],
-                                        }
-                                    }></BarChart>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    ))
-                    :
-                    selectedNavItem === 2 ?
-                    <>
-                    <div className='col-2'></div>
-                    <div className='col-8 border border-light text-white p-5'>
-                        <h2 className='title text-white'><u>CREATE NEW PROPOSAL</u></h2>
-                        <form>
-                            <label>Proposal Text: </label>
-                            <br/>
-                            <textarea onChange={(e) => {{setProposal({...proposal, text: e.target.value})}}} style={{width:"80%", height:"80px", padding:"5px"}}/>
-                            <br/><br/>
-                            <button type="button" className='btn btn-secondary rounded-0' onClick={() => {let optionValues = proposal.options; optionValues.push(""); setProposal({...proposal, options: optionValues}); setInputList(inputList.concat(<div key={inputList.length}><br/><label>Option {inputList.length + 1}: </label><input required onChange={(e) => {let optionValues = proposal.options; optionValues[inputList.length] = e.target.value; setProposal({...proposal, options: optionValues})}} /></div>))}}>Add New Option</button>
-                            {inputList}
-                            <br/>
-                            {
-                                inputList.length === 0 ?
-                                <></>
-                                :
-                                <button type="button" className='btn btn-danger rounded-0' onClick={() => {let optionValues = proposal.options; optionValues.pop(); setProposal({...proposal, options: optionValues}); var slicedList = inputList.slice(0, inputList.length-1); setInputList(slicedList)}}>Remove Last Option</button>
-                            }
-                            <br/><br/>
-                            <label>Voting Power: </label>
-                            <input type="number" onChange={(e) => {setProposal({...proposal, voting_power: e.target.value})}}/>
-                            <br/>
-                            <br/>
-                            <button type="button" className='btn btn-primary rounded-0' onClick={() => {Create_proposal(proposal.text, proposal.options, proposal.voting_power); /*setProposal({text: "", options: [], voting_power: 0})*/}}>Create This Proposal</button>
-                            {console.log(proposal)}
-                        </form>
-                    </div>
-                    </>
+        return  selectedNavItem === 0 ?
+                    <CreateChildDAO onCreateChildDAO={CreateChildDAOFunc}></CreateChildDAO>
+                :
+                selectedNavItem === 1 ?
+                    <SendYKToken onSendTokens={SendYKTokens}></SendYKToken>
                 :
                 selectedNavItem === 3 ?
-                <>
-                    {[0,1,2].map((i) => (
-                        <div className='col-4 text-white' key={i}>
-                            {
-                                all_props.map((element, index) => (
-                                    index % 3 === i ?
-                                    element["returnValues"]["5"] === "1" ?
-                                        <div className='card bg-black border border-white text-white p-5 my-2'>
-                                            <TextBoxProposal>{element["returnValues"]["2"]}</TextBoxProposal><br/><br/>
-                                                {
-                                                element["returnValues"]["3"].map((item,keyIndex) => (
-                                                    <div key={keyIndex}>
-                                                        <input className="form-check-input" type="radio" id="html" name="fav_language" value={item} onClick={(e) => {let selCopy = [...selection]; selCopy[index][0] = e.target.value; setSelection(selCopy)}}/>
-                                                        <label className="form-check-label" htmlFor="html">{item}</label><br/>
-                                                    </div>
-                                                ))
-                                                }
-                                                <br/>
-                                                <button type="button" className='btn btn-primary btn-block' onClick={ () => 
-                                                    {
-                                                        if(selection[index][0] === ""){
-                                                            alert("please select an input before submitting")
-                                                        }
-                                                        else{
-                                                            console.log(element["returnValues"]["0"])
-                                                            console.log(selection[index])
-                                                            to_vote_power_singular(element["returnValues"]["0"], selection[index]) 
-                                                        }
-                                                    }
-                                                }> Vote </button>
-                                        </div>
-                                    :                        
-                                        <div className='card bg-black border border-white text-white p-5 my-2'>
-                                            <TextBoxProposal>{element["returnValues"]["2"]}</TextBoxProposal><br/>
-                                            <label className='h6'>Voting Power: {element["returnValues"]["5"]}</label><br/>
-                                            {
-                                                element["returnValues"]["3"].map((item,indx2) => (
-                                                    <div className='row'> 
-                                                        <div className='col-4'>
-                                                            <label htmlFor="html">{item}</label>
-                                                        </div>   
-                                                        <div className='col-8'>
-                                                            <div className="input-group mb-3">
-                                                                <div className="input-group-append">
-                                                                    <button type="button" className='btn btn-danger rounded-0' disabled={selection[index][indx2] === 0} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setSelection(selCopy)}}>-</button>
-                                                                </div>
-                                                                <input type="number" className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={selection[index][indx2]}/>
-                                                                <div className="input-group-append">
-                                                                    <button type="button" className='btn btn-primary rounded-0' disabled={getTotalCount(selection[index]) == element["returnValues"]["5"]} onClick={() => {let selCopy = [...selection]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setSelection(selCopy)}}>+</button><br/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))    
-                                            }
-                                            <br/>
-                                            <button type="button" className='btn btn-primary btn-block' onClick={ () => {
-                                            to_vote_power(element["returnValues"]["0"],element["returnValues"]["3"],selection[index])}}
-                                            > Vote </button>
-                                            <br/>
-                                        </div>
-                                    :
-                                    <></>
-                                ))
-                            }
-                        </div>
-                    ))}
-                    </>
-                    :
-                    selectedNavItem === 4 ?
-                    <div className='container'>
-                        <div className='row mt-5'>
-                            <div className='col-4'></div>
-                            <div className='col-2'>
-                                <button onClick={()=>Deposit_yk_tokens()} className='btn btn-primary'>Deposit YK Tokens</button>
-                            </div>
-                            <div className='col-2'>
-                                {/* <button onClick={()=>Deposit_voter_tokens()} className='button is-primary'>Deposit VK Tokens</button> */}
-                                <button onClick={()=>Deposit_voter_tokens()} className='btn btn-primary'>Deposit VK Tokens</button>
-                            </div>
-                        </div>
-                    </div>
-                    : 
-                    <></>
+                    <SendVoterToken onSendTokens={SendVoterTokens}></SendVoterToken>
+                :
+                selectedNavItem === 4 ?
+                    <CreateProposal onCreateProposal={Create_proposal}></CreateProposal>
+                :
+                selectedNavItem === 5 ?
+                    <></>/*<TransferTokens onTransferTokens={TransferVoterTokens}></TransferTokens>*/
+                :
+                selectedNavItem === 6 ?
+                    <VoteOnProposals to_vote_power={to_vote_power} all_props={all_props} setcurrAmountOfVotes={setSelection} currAmountOfVotes={selection}></VoteOnProposals>
+                :
+                selectedNavItem === 7 ?
+                    <WithdrawTokens onWithdrawVoterTokens={WithdrawVoterTokens} onWithdrawYKTokens={WithdrawYKTokens} onVoterSharesToBeGiven={GetVoterSharesToBeGiven} onYKSharesToBeGiven={GetYKSharesToBeGiven}></WithdrawTokens>
+                : 
+                selectedNavItem === 8 ?
+                    <Proposals all_proposals={all_props}></Proposals>
+                :
+                selectedNavItem === 9 ?
+                    <ViewSubDAOs onGetSubDAOs={GetSubDAOs} onGetParentDAO={GetParentDAO}></ViewSubDAOs>
+                :
+                <></>
     }
 
     return(
@@ -603,7 +335,7 @@ export default function Dao(){
                             </div>
                         </div>
                         <div className="list-group" id="list-tab" role="tablist">
-                            <button onClick={ connectWallethandler}  className="list-group-item list-group-item-action bg-transparent border border-white text-white mb-2" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="home">Connect Wallet</button>
+                            <button onClick={ connectWallethandler }  className="list-group-item list-group-item-action bg-transparent border border-white text-white mb-2" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="home">Connect Wallet</button>
                         </div>
                     </div>
                     <ul className="nav flex-column my-2">
@@ -611,16 +343,19 @@ export default function Dao(){
                             <h2 className='nav-link text-white'>Administrative</h2>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Create a SubDAO</a>
+                            <a className="nav-link" href="#" onClick={() => { setSelectedNavItem(0)}}>Create a SubDAO</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Assign a New YK</a>
+                            <a className="nav-link" href="#" onClick={() => { setSelectedNavItem(1)}}>Assign a New YK</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Delete DAO</a>
+                            <a className="nav-link" href="#">Increase Voter Token Amount (not working)</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={() => {setSelectedNavItem(2)}}>Create New Proposal</a>
+                            <a className="nav-link" href="#" onClick={() => { setSelectedNavItem(3)}}>Send Voter Token</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#" onClick={() => { setSelectedNavItem(4)}}>Create New Proposal</a>
                         </li>
                     </ul>
                     <br/><br/>
@@ -629,16 +364,16 @@ export default function Dao(){
                             <h2 className='nav-link text-white'>Member Functions</h2>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Check My Tokens</a>
+                            <a className="nav-link" href="#">Check My Tokens (not working)</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Transfer Tokens</a>
+                            <a className="nav-link" href="#" onClick={() => {setSelectedNavItem(5)}}>Transfer Tokens (not working)</a>
                         </li>
                         <li className="nav-item">
-                            <a className='nav-link' onClick={async() => {await all_proposals(); setSelectedNavItem(3)}}>Vote on Proposals</a>
+                            <a className='nav-link' onClick={async() => {await all_proposals(); setSelectedNavItem(6)}}>Vote on Proposals</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={() => {setSelectedNavItem(4)}}>Get Tokens</a>
+                            <a className="nav-link" href="#" onClick={() => {setSelectedNavItem(7)}}>Withdraw Tokens</a>
                         </li>
                     </ul>
                     <br/><br/>
@@ -647,10 +382,10 @@ export default function Dao(){
                             <h2 className='nav-link text-white'>Non-Member Functions</h2>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={async() => {await all_proposals(); setSelectedNavItem(1)}}>View Proposals</a>
+                            <a className="nav-link" href="#" onClick={async() => {await all_proposals(); setSelectedNavItem(8)}}>View Proposals</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">View SubDAOs</a>
+                            <a className="nav-link" href="#" onClick={() => { setSelectedNavItem(9)}}>View SubDAOs</a>
                         </li>
                     </ul>
                     <br/><br/>
@@ -672,24 +407,8 @@ export default function Dao(){
                         </div>
                         <div className="col-2"></div>
                         <div className="col-2">
-                            {/* <button className='btn btn-block btn-danger'><a className='text-light' href='/'>Go Back to the Main Page</a></button> */}
                         </div>
                     </div>
-                    {/* <div className="row mt-5">
-                        <div className="col-10"></div>
-                        <div className="col-2">
-                            <button onClick={
-                                connectWallethandler} className='btn btn-block btn-primary'>Connect Wallet</button>
-                        </div>
-                    </div>
-                    <div className="row mt-5">
-                        <nav className="nav nav-pills flex-column flex-sm-row">
-                            <button type='button' className={selectedNavItem === 1 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(1)}}>Proposals</button>
-                            <button type='button' className={selectedNavItem === 2 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(2)}}>Create A Proposal</button>
-                            <button type='button' className={selectedNavItem === 3 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={async() => {await all_proposals(); setSelectedNavItem(3)}}>Give Vote</button>
-                            <button type='button' className={selectedNavItem === 4 ? "flex-sm-fill text-sm-center nav-link active rounded-0" : "flex-sm-fill text-sm-center nav-link text-light rounded-0 border"} onClick={() => {setSelectedNavItem(4)}}>Get Tokens</button>    
-                        </nav>
-                    </div> */}
                     <div className='row mt-5'>
                         {getHTMLBody()}
                     </div>
@@ -697,8 +416,10 @@ export default function Dao(){
                 </div>
             </div>
         </div>
+        <Popup trigger={popupTrigger} setTrigger={setPopupTrigger}>
+            <h2 className='h2 text-black'>{alertMessage.title}</h2>
+            <p>{alertMessage.text}</p>
+        </Popup>
     </div>
     )
 }
-//export default dao;
-// to_vote(element["returnValues"]["0"],item)
