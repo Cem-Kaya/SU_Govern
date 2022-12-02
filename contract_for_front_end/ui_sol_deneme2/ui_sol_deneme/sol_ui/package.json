@@ -13,7 +13,7 @@
     "@openzeppelin/contracts": "^4.8.0",
     "bulma": "^0.9.4",
     "chart.js": "^3.9.1",
-    "next": "^12.3.2",
+    "next": "^12.3.4",
     "react": "^18.1.0",
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.1.0",

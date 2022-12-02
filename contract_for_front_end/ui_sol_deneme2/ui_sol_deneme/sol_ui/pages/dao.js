@@ -398,7 +398,7 @@ export default function Dao(){
                                 <div className="card-body">
                                     <h4 className="card-title text-center text-black">DAO</h4>
                                     <p className="card-text">This is the DAO page of ...</p>
-                                    <p className="card-text"><small className="text-muted">175 members</small></p>
+                                    <p className="card-text"><small className="text-muted">Welcome!</small></p>
                                     <p className="card-text"><small className="text-muted">45 Proposals Created</small></p>
                                 </div>
                             </div>
