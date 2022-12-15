@@ -13,7 +13,17 @@ contract SUToken is ISUToken, ERC20, Ownable {
     address public myDAO;
     mapping (address => mapping(uint256 => bool)) public transferLock;
     
-
+    address[] public dao_delegations;
+    mapping (address => uint256 ) public dao_delegations_value;
+    mapping (address => address[]) public user_delegations;
+    //below can also be called debt value
+    mapping (address=> mapping(address=> uint256)) public user_delegations_value;
+    //my_tokens are sendable tokens while debt tokens ssay in your wallet until they are called back.
+    mapping (address => uint256) public my_tokens;
+    mapping (address => uint256) public debt_tokens; 
+    //all tokens the dao itself has given.
+    uint256 total_my_tokens_given;
+    
 
     constructor(string memory name, string memory symbol, address owner) ERC20(name, symbol) {
         _mint(owner, 1000 * 10 ** decimals());
@@ -31,15 +41,20 @@ contract SUToken is ISUToken, ERC20, Ownable {
 
     //between people
     //virtual vardi eskiden 
+
+
     function transfer(address to, uint256 amount) public override (ERC20, ISUToken) returns (bool) {
         address owner = _msgSender();
         for (uint i = 0; i < proposal_num; i ++ ){
             if(transferLock[owner][i] == true){
-                //address_proposals_cant_vote_on[to][i] = address_proposals_cant_vote_on[owner][i];
                 require(false , "have active voting");
             }
         }      
         _transfer(owner, to, amount);
+        my_tokens[owner] -= amount;
+        debt_tokens[to] += amount;
+        user_delegations_value[owner][to] += amount;
+        user_delegations[owner].push(to);
         return true;
     }
 
@@ -49,8 +64,41 @@ contract SUToken is ISUToken, ERC20, Ownable {
         require(owner == myDAO);
         //when dao sends it this is not the case
         _transfer(owner, to, amount);
+        my_tokens[to] += amount;
+        dao_delegations_value[to] += amount;
+        dao_delegations.push(to);
+        
         return true;
     }
+
+    //form = b tokeni gecici olarak alan kisi to = a tokeni basta gonderen kisi 
+    function delegation_single_getback(address from, address to, uint256 amount) public  returns (bool) {
+        for (uint i = 0; i < proposal_num; i ++ ){
+            if(transferLock[from][i] == true){
+                transferLock[to][i] == true; // lockthe original owner               
+            }
+        }      
+        _transfer(from, to, amount);
+        debt_tokens[from] -= amount;
+        my_tokens[to] += amount;
+        user_delegations_value[to][from] -= amount;
+        for ( uint i = 0; i < user_delegations[to].length; i++){
+            if(user_delegations[to][i] == from){
+                //user_delegations[to][i];
+                //string element = myArray[index];
+                user_delegations[to][i] = user_delegations[to][user_delegations[to].length - 1];
+                user_delegations[to].pop();
+                break;
+            }
+        }
+        return true;
+    }
+    
+    
+
+
+
+
 
     function update_proposal_num(uint proposals) public override {
         address owner = msg.sender;
