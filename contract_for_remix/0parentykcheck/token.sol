@@ -74,7 +74,8 @@ contract SUToken is ISUToken, ERC20, Ownable {
     }
 
     //form = b tokeni gecici olarak alan kisi to = a tokeni basta gonderen kisi 
-    function delegation_single_getback_amount(address from, address to, uint256 amount) public  returns (bool) {
+    function delegation_single_getback_amount(address from, address to, uint256 amount) public override returns (bool) {
+        require(_msgSender() == myDAO || _msgSender() == address(this) , "sender is not dao or token");
         for (uint i = 0; i < proposal_num; i ++ ){
             if(transferLock[from][i] == true){
                 transferLock[to][i] = true; // lockthe original owner               
@@ -96,13 +97,15 @@ contract SUToken is ISUToken, ERC20, Ownable {
         return true;
     }
     //form = b tokeni gecici olarak alan kisi to = a tokeni basta gonderen kisi 
-    function delegation_single_getback_all(address from, address to ) public  returns (bool) {
+    function delegation_single_getback_all(address from, address to ) public override returns (bool) {
+        require(_msgSender() == myDAO || _msgSender() == address(this) , "sender is not dao or token");
         delegation_single_getback_amount( from,  to,  user_delegations_value[to][from]);
         return true;
     }
     
     //this will allow the user to get all delegated tokens back
-    function delagation_multiple_getback_all(address to) public returns (bool) {
+    function delagation_multiple_getback_all(address to) public override returns (bool) {
+        require(_msgSender() == myDAO || _msgSender() == address(this) , "sender is not dao or token");
         for (uint i = 0; i < user_delegations[to].length; i++) {
             address delegate = user_delegations[to][i];
             uint256 amount = user_delegations_value[to][delegate];
@@ -117,10 +120,10 @@ contract SUToken is ISUToken, ERC20, Ownable {
     } 
 
     //to is actually from
-    function clawback_single(address to) public returns (bool){
-        //require(_msgSender() == myDAO || _msgSender() == address(this) , "sender is not dao or token");
+    function clawback_single(address to) public override returns (bool){
+        require(_msgSender() == myDAO || _msgSender() == address(this) , "sender is not dao or token");
         delagation_multiple_getback_all(to);
-        //require(my_tokens[to] == dao_delegations_value[to] , "something went very wrong ");
+        require(my_tokens[to] == dao_delegations_value[to] , "something went very wrong ");
         /////////////////////////////////////////////////////////////////
         
         if(my_tokens[to] == 0){
@@ -135,8 +138,8 @@ contract SUToken is ISUToken, ERC20, Ownable {
         return true;        
     }
 
-    function clawback_all() public returns (bool){
-        //require(_msgSender() == myDAO, "sender is not dao");
+    function clawback_all() public override returns (bool){
+        require(_msgSender() == myDAO, "sender is not dao");
         for (uint i = 0; i < dao_delegations.length; i ++ ){
             clawback_single(dao_delegations[i]);
         }
@@ -171,6 +174,12 @@ contract SUToken is ISUToken, ERC20, Ownable {
         _transferOwnership(newOwner);
     }
 
+    function getDebtToken(address adr) public override view returns (uint256) {
+        return debt_tokens[adr];
+    }
+    function getMyToken(address adr) public override view returns (uint256) {
+        return my_tokens[adr];
+    }    
 
 
     //soyle oncelikle factory de tokenime dao adresim giriliyor, sonra ben yk olarak birine token gonderirsem bir sorun yok, ama normal 

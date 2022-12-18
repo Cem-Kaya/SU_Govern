@@ -20,6 +20,16 @@ interface ISUToken is IERC20{
     function update_active_voter_lock_off(uint proposal, address sender) external ; 
     function increaseAllowance(address spender, uint256 addedValue) external  returns (bool);
     
+    function delegation_single_getback_amount(address from, address to, uint256 amount) external returns (bool);
+    function delegation_single_getback_all(address from, address to ) external  returns (bool);
+    function delagation_multiple_getback_all(address to) external returns (bool);
+    function clawback_single(address to) external returns (bool);
+    function clawback_all() external returns (bool);
+
+    function getDebtToken(address adr) external view returns (uint256);
+    function getMyToken(address adr) external view returns (uint256);
+
+    
     //constructor(string memory name, string memory symbol, address owner) external  ;
 
 

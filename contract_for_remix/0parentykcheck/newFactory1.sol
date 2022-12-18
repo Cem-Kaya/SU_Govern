@@ -68,12 +68,14 @@ contract DAOFactory {
         yk_token.transferFrom(address(this), address(c), (1000 * 10 ** 18));
         all_daos[next_dao_id] = c;
 
+
+
         next_dao_id += 1;
     }
 
 
     function createChildDAO( MyDAO parent, string memory dao_name,  string memory dao_description, string memory yk_token_name, string memory yk_token_symbol, string memory voter_token_name, string memory voter_token_symbol) public {
-        require(dao_tokens_yk[parent].balanceOf(msg.sender) > 0, 'Not a YK of parent DAO');
+        require(parent.has_yk_priviliges(msg.sender) == true, 'Not a YK of parent DAO');
         //line below mints 1000 tokens to this factory, also makes factory the owner of these tokens
  
 
@@ -108,19 +110,22 @@ contract DAOFactory {
         voter_token.transferFrom(address(this), address(c), 1000 * 10**18);
         yk_token.transferFrom(address(this), address(c), (1000 * 10 ** 18));
 
+
+
+
         all_daos[next_dao_id] = c;
         next_dao_id += 1;
     }
 
     function mint_dao_yk(MyDAO to_be_minted, uint amount, address sender) public {
-        require(dao_tokens_yk[to_be_minted].balanceOf(sender)>= 0, "Not YK of selected DAO");
+        require(to_be_minted.has_yk_priviliges(sender), "Not YK of selected DAO");
         //make sure the one who sends this is dao
         require(msg.sender == address(to_be_minted), "Don't even try");
         dao_tokens_yk[to_be_minted].mint(address(to_be_minted), amount*10**18);
     }
 
     function mint_dao_voter(MyDAO to_be_minted, uint amount, address sender) public {
-        require(dao_tokens_yk[to_be_minted].balanceOf(sender)>= 0, "Not YK of selected DAO");
+        require(to_be_minted.has_yk_priviliges(sender), "Not YK of selected DAO");
         //make sure the one who sends this is dao
         require(msg.sender == address(to_be_minted), "Don't even try");
         dao_tokens_voter[to_be_minted].mint(address(to_be_minted), amount*10**18);
