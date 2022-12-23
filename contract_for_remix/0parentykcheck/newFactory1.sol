@@ -131,6 +131,7 @@ contract DAOFactory {
         dao_tokens_voter[to_be_minted].mint(address(to_be_minted), amount*10**18);
     }
 
+   
 
 
     function addCreator(address input_creator) public
@@ -144,6 +145,34 @@ contract DAOFactory {
     function getCurrentDAO(uint256 id)  public view returns (MyDAO){
         return all_daos[id];
 
+    }
+
+
+
+    function delete_DAO(MyDAO to_be_deleted, address sender) public {
+        require(to_be_deleted.has_yk_priviliges(sender) || msg.sender == address(this) || msg.sender == address(to_be_deleted), "Not YK of selected DAO");
+        //make sure the one who sends this is dao
+        require(msg.sender == address(to_be_deleted), "Don't even try");
+
+
+        
+        for (uint i = 0 ; i < parent_child_daos[to_be_deleted].length; i++){
+            parent_child_daos[to_be_deleted][i].delete_this_dao();            
+        }
+        for ( uint i = 0; i < parent_child_daos[child_parent[to_be_deleted]].length; i++){
+            if( parent_child_daos[child_parent[to_be_deleted]][i]== to_be_deleted){
+                //user_delegations[to][i];
+                //string element = myArray[index];
+                parent_child_daos[child_parent[to_be_deleted]][i] = parent_child_daos[child_parent[to_be_deleted]][parent_child_daos[child_parent[to_be_deleted]].length - 1];
+                parent_child_daos[child_parent[to_be_deleted]].pop();
+
+                
+            }
+
+        }        
+        dao_exists[to_be_deleted] = false;
+        MyDAO c;
+        all_daos[ to_be_deleted.getDaoid()] = c;
     }
 
 }

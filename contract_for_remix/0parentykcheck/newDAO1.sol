@@ -329,7 +329,7 @@ contract MyDAO {
         }
         return myprops;
     }
-    function getDaoid() public view returns (uint){
+    function getDaoid() public view returns (uint256){
         return dao_id;
 
     }
@@ -464,6 +464,13 @@ contract MyDAO {
     }
     function dao_clawback_all_yk() external {
         require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
+        yk_token.clawback_all( );
+    }
+
+    function delete_this_dao( ) external {
+        require(has_yk_priviliges(msg.sender) || msg.sender == address(factory) , "does not have yk priviliges or is not factory") ;
+        voter_token.clawback_all( );
+        factory.delete_DAO(this, msg.sender);
         yk_token.clawback_all( );
     }
 }                   
