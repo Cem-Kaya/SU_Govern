@@ -3,37 +3,30 @@ import React, { Component, useState } from "react";
 class Card extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      index: this.props.index,
-      title: this.props.title,
-      text: this.props.text,
-      address: this.props.address,
-    };
   }
+
   render() {
     return (
-      <div key={this.state.index} className="col-3 my-2">
-        <a href={`/dao?address=${this.state.address}`}>
-          <div
-            className="card text-white"
-            style={{ backgroundColor: "#4D5674" }}
-          >
-            <div className="card-header">
-              <div className="container p-3">
-                <img
-                  className="card-img-top rounded-circle"
-                  src="https://picsum.photos/200/200"
-                  alt="Card image cap"
-                />
-              </div>
+      <a href={this.props.address}>
+        <div
+          key={this.props.index}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="item-card">
+            <div>
+              <img
+                src={"https://picsum.photos/200/200"}
+                alt=""
+                style={{ width: "100%", height: "25vh", objectFit: "fill" }}
+              />
             </div>
-            <div className="card-body">
-              <h5 className="card-title">{this.state.title}</h5>
-              <p className="card-text">{this.state.text}</p>
+            <div className="card-text">
+              <h3 className="card-title">{this.props.title}</h3>
+              <p className="card-desc">{this.props.text}</p>
             </div>
           </div>
-        </a>
-      </div>
+        </div>
+      </a>
     );
   }
 }

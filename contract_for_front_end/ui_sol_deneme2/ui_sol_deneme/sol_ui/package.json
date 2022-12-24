@@ -10,13 +10,23 @@
     "compile": "solcjs --abi --include-path node_modules/ --base-path . blockchain/contracts/myDao.sol --output-dir blockchain/build"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.4.4",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mantine/core": "^5.9.2",
+    "@mantine/hooks": "^5.9.2",
+    "@mantine/notifications": "^5.9.2",
     "@openzeppelin/contracts": "^4.8.0",
+    "@tabler/icons": "^1.117.0",
     "bulma": "^0.9.4",
     "chart.js": "^3.9.1",
+    "framer-motion": "^7.10.2",
     "next": "^12.3.4",
     "react": "^18.1.0",
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.1.0",
+    "react-router-dom": "^6.5.0",
+    "sass": "^1.57.0",
     "solc": "^0.8.6-fixed",
     "styled-components": "^5.3.5",
     "web3": "^1.7.3"

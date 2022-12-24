@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import Web3 from "web3";
 import Popup from "../components/Popup";
+import Spinner from "../components/Spinner";
 import Card from "../components/Card";
-import Sidebar from "../components/SideBar";
+import { SimpleGrid } from "@chakra-ui/react";
+import Header from "../components/Header";
 export default function Home() {
   const [alertMessage, setAlertMessage] = useState({ text: "", title: "" });
   const [popupTrigger, setPopupTrigger] = useState(false);
@@ -11,6 +13,8 @@ export default function Home() {
   const [topDAOAddress, setTopDAOAddress] = useState("");
   const dataFactory = require("../blockchain1/build/contracts/DAOFactory.json");
   const dataDAO = require("../blockchain1/build/contracts/MyDAO.json");
+
+  const [loaded, setLoaded] = useState(false);
 
   let web3js;
   let daoFactoryContract;
@@ -91,6 +95,7 @@ export default function Home() {
         allDaos.push([daoAddress, daoName, daoDescription]);
       }
       setall_daos(allDaos);
+      setLoaded(true);
       return 0;
     };
     fetchAllDaos();
@@ -101,6 +106,7 @@ export default function Home() {
     console.log(event);
   };
   let isInitialized = false;
+
   const connectWallethandler = async () => {
     if (
       typeof window !== "undefined" &&
@@ -142,7 +148,7 @@ export default function Home() {
         selectedAccount = accounts[0];
         setAlertMessage({
           text: `Selected account changed to ${selectedAccount}`,
-          title: "Warning",
+          title: "Success",
         });
         setPopupTrigger(true);
       });
@@ -154,7 +160,7 @@ export default function Home() {
 
     daoFactoryContract = new web3.eth.Contract(
       daoFactoryABI,
-      "0x75824759C71Ca4C2F2C2fecCe608F15cfCfF3feB"
+      "0x6FDF6349AD62e7eF0E111505B7b1bAe0eEC252d4"
     );
     isInitialized = true;
   };
@@ -171,48 +177,26 @@ export default function Home() {
           crossOrigin="anonymous"
         ></link>
       </Head>
-      <div style={{ minHeight: "100vh", backgroundColor: "#394263" }}>
-        <div className="row mx-0">
-          <Sidebar
-            search={searchChange}
-            connectWallethandler={connectWallethandler}
-          />
-          {/* MAIN CONTAINER BEGIN */}
-          <div className="col-9">
-            <div className="container">
-              <nav className="navbar navbar-expand-lg navbar-dark p-2">
-                <a className="navbar-brand" href="/">
-                  SUDAO
-                </a>
-                <div
-                  className="collapse navbar-collapse"
-                  id="navbarNavAltMarkup"
-                >
-                  <div className="navbar-nav">
-                    <a className="nav-item nav-link" href="/docs">
-                      Documentation
-                    </a>
-                  </div>
-                </div>
-              </nav>
-              <div className="row py-3">
-                {all_daos.map((dao, index) => {
-                  return (
-                    <Card
-                      index={index}
-                      title={String(dao[1]).concat(
-                        String(topDAOAddress == dao[0] ? "(top dao)" : "")
-                      )}
-                      text={dao[2]}
-                      address={dao[0]}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-            {/* MAIN CONTAINER END */}
-          </div>
-        </div>
+      <Header WalletConnect={connectWallethandler} logged={false} />
+      <div>
+        {!loaded ? (
+          <Spinner></Spinner>
+        ) : (
+          <SimpleGrid minChildWidth="20vw" spacing="40px">
+            {all_daos.map((dao, index) => {
+              return (
+                <Card
+                  index={index}
+                  address={`/dao?address=${dao[0]}`}
+                  title={String(dao[1]).concat(
+                    topDAOAddress == dao[0] ? " (top dao)" : ""
+                  )}
+                  text={dao[2]}
+                />
+              );
+            })}
+          </SimpleGrid>
+        )}
       </div>
       <Popup trigger={popupTrigger} setTrigger={setPopupTrigger}>
         <h2 className="h2 text-black">{alertMessage.title}</h2>

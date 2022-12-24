@@ -3,7 +3,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 pragma experimental ABIEncoderV2;
 
-import "./token.sol";
+import "./itoken.sol";
 import "./newFactory1.sol";
 
 
@@ -11,8 +11,9 @@ import "./newFactory1.sol";
 contract MyDAO {
     string public dao_name;
     string public dao_description;
+    uint256 dao_id;
     enum VotingOptions { Yes, No }
-    enum Status { Accepted, Rejected, Pending }
+    enum Status     { Accepted, Rejected, Pending }
     
 
     
@@ -21,6 +22,7 @@ contract MyDAO {
         uint256 id;
         address author;
         string name;
+        string proposal_description;
         uint256 createdAt;
         string[] options;
         uint256[] options_num;
@@ -47,7 +49,7 @@ contract MyDAO {
     // store all proposals
     mapping(uint => Proposal) public proposals;    
     //to print out proposals
-    event proposal_info(uint256 id, address author, string name, string[] options, uint256[] num_options, uint256 power, string proposal_info_type);
+    event proposal_info(uint256 id, address author, string name,string proposal_description, string[] options, uint256[] num_options, uint256 power, string proposal_info_type);
     // who already votes for who and to avoid vote twice
     mapping(address => mapping(uint => bool)) public votes;
     mapping(address => mapping(uint => bool)) public tokens_not_refunded;
@@ -57,8 +59,8 @@ contract MyDAO {
     mapping(address => uint256) public yk_shares_to_be_given;
 
     // the IERC20 allow us to use avax like our governance token.
-    SUToken public voter_token;
-    SUToken public yk_token;
+    ISUToken public voter_token;
+    ISUToken public yk_token;
     // the user need minimum 25 AVAX to create a proposal.
     uint constant CREATE_PROPOSAL_MIN_SHARE = 1 * 10 ** 18;
     uint constant VOTING_PERIOD = 7 days;
@@ -66,9 +68,10 @@ contract MyDAO {
     
     mapping(address => bool) transferLock;
 
-    constructor(string memory _dao_name, string memory _dao_description, address first_yk, SUToken yk_token_in, SUToken voter_token_in, DAOFactory _factory) {
+    constructor(string memory _dao_name, string memory _dao_description,uint _dao_id, address first_yk, ISUToken yk_token_in, ISUToken voter_token_in, DAOFactory _factory) {
         factory = _factory;
         dao_name = _dao_name;
+        dao_id=_dao_id;
         dao_description = _dao_description;
         yk_token = yk_token_in; // AVAX address
         voter_token = voter_token_in;
@@ -97,7 +100,7 @@ contract MyDAO {
                 voter_token.update_active_voter_lock_off(i, msg.sender);
             }
 
-            emit proposal_info(proposals[i].id, proposals[i].author, proposals[i].name, proposals[i].options, proposals[i].options_num, proposals[i].power, proposals[i].proposal_info_type);
+            emit proposal_info(proposals[i].id, proposals[i].author, proposals[i].name,proposals[i].proposal_description, proposals[i].options, proposals[i].options_num, proposals[i].power, proposals[i].proposal_info_type);
 
         }
         
@@ -109,6 +112,7 @@ contract MyDAO {
 
     function reject_proposal(uint _proposalId) external {
         proposals[_proposalId].status = Status.Rejected;
+    
     }    
 
     function pending_proposal(uint _proposalId) external {
@@ -139,7 +143,7 @@ contract MyDAO {
     }    
     
     function send_yk_tokens_to_address_yk(address yk_candidate, uint _amount) external {
-        require(yk_token.balanceOf(msg.sender) >= 1 * 10 **18, 'Not a YK');
+        require(has_yk_priviliges(msg.sender), 'Not a YK');
         //yk_shares[msg.sender] -= (_amount * 10 ** 18);
         //totalShares -= (_amount * 10 ** 18);
         //total_yk_shares -= (_amount * 10 ** 18);
@@ -150,7 +154,7 @@ contract MyDAO {
     } 
 
     function send_yk_tokens_to_address_yk_directly(address yk_candidate, uint _amount) external {
-        require(yk_token.balanceOf(msg.sender) >= 1 * 10 **18, 'Not a YK');
+        require(has_yk_priviliges(msg.sender) , 'Not a YK');
         //yk_shares[msg.sender] -= (_amount * 10 ** 18);
         //totalShares -= (_amount * 10 ** 18);
         //total_yk_shares -= (_amount * 10 ** 18);
@@ -164,7 +168,7 @@ contract MyDAO {
  
  
     function send_voter_tokens_to_address_yk(address voter_candidate, uint _amount) external {
-        require(yk_token.balanceOf(msg.sender) >= 1* 10 **18, 'Not a YK');
+        require(has_yk_priviliges(msg.sender), 'Not a YK');
         //yk_shares[msg.sender] -= (_amount * 10 ** 18);
         //totalShares -= (_amount * 10 ** 18);
         //total_yk_shares -= (_amount * 10 ** 18);
@@ -174,7 +178,7 @@ contract MyDAO {
     }                   
 
     function send_voter_tokens_to_address_yk_directly(address voter_candidate, uint _amount) external {
-        require(yk_token.balanceOf(msg.sender) >= 1* 10 **18, 'Not a YK');
+        require(has_yk_priviliges(msg.sender) , 'Not a YK');
         //yk_shares[msg.sender] -= (_amount * 10 ** 18);
         //totalShares -= (_amount * 10 ** 18);
         //total_yk_shares -= (_amount * 10 ** 18);
@@ -187,9 +191,10 @@ contract MyDAO {
     //in yk functions token verification tokens have to be in the contract however in voter sending function 
      
 
-    function createProposal(string memory name, string[] memory _options, uint256[] memory _options_num, uint256 _power, uint256 _type) external {
+    function createProposal(string memory name,string memory description, string[] memory _options, uint256[] memory _options_num, uint256 _power, uint256 _type) external {
         // validate the user has enough shares to create a proposal
-        require(yk_token.balanceOf(msg.sender) >= CREATE_PROPOSAL_MIN_SHARE, 'Not enough shares to create a proposal');
+        //require(yk_token.balanceOf(msg.sender) >= CREATE_PROPOSAL_MIN_SHARE, 'Not enough shares to create a proposal');
+        require(has_yk_priviliges(msg.sender), 'Not enough shares to create a proposal');
         string memory proposal_type;
         //sorun olursa buradan
         if(_type == 0){
@@ -203,6 +208,7 @@ contract MyDAO {
             nextProposalId,
             msg.sender,
             name,
+            description,
             block.timestamp,
             _options,
             _options_num,
@@ -323,6 +329,47 @@ contract MyDAO {
         }
         return myprops;
     }
+    function getDaoid() public view returns (uint){
+        return dao_id;
+
+    }
+    //my chk is the person I am checking lol
+    function has_yk_priviliges(address chk) public view returns (bool){
+
+         if(yk_token.balanceOf(chk) >= 1)
+         {
+            return true;
+         }
+         MyDAO current_dao=factory.getCurrentDAO(dao_id);
+         MyDAO parent_dao= factory.getParentDAO(current_dao);
+         
+         
+         bool exist=false;
+         while(address(parent_dao)!=address(0)){
+             if(parent_dao.yk_token().balanceOf(chk) >= 1 * 10 **18)
+             {
+                 exist=true;
+                 break;
+             }
+             parent_dao= factory.getParentDAO( parent_dao );
+         }
+         return exist;
+
+    }
+    
+    function getProposalDescription() public view returns (string[] memory){
+        //string[][] propoptions;
+        string[] memory myprops = new string[](nextProposalId);
+        //string[][] propvotes;
+        for (uint i = 0; i < nextProposalId; i++) {
+            myprops[i] = proposals[i].proposal_description;
+            //propvotes.push(proposals[i].name);
+            //for(uint y = 0; y < proposals[i].options.length; y++){
+            //    propvotes[i][y]
+            //}
+        }
+        return myprops;
+    }
 
     function getProposalVoteNames(uint proposal_idd) public view returns (string[] memory){
         //string[][] propoptions;
@@ -368,7 +415,57 @@ contract MyDAO {
         string memory myproppower = proposals[proposal_idd].proposal_info_type;
 
         return myproppower;
-    }          
+    }     
+
+    
+    //form = b tokeni gecici olarak alan kisi to = a tokeni basta gonderen kisi 
+    function dao_delegation_single_getback_amount_voter(address from, uint256 amount) external{
+        require(amount <= voter_token.getDebtToken(from), "not enough debt somehow");       
+        voter_token. delegation_single_getback_amount(from, msg.sender, amount);        
+    }
+
+    function dao_delegation_single_getback_all_voter(address from ) external  {
+        voter_token.delegation_single_getback_all(from, msg.sender);
+    }
+
+    function dao_delagation_multiple_getback_all_voter( ) external{
+        voter_token.delagation_multiple_getback_all( msg.sender);
+    }
+    function dao_clawback_single_voter(address from) external{
+        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
+        voter_token.clawback_single( from);
+    }
+    function dao_clawback_all_voter() external{
+        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
+        voter_token.clawback_all( );
+    }
+    
+
+
+
+
+    
+    /////////////////////////////////////////////////////////////////////////////////////
+    function dao_delegation_single_getback_amount_yk(address from, uint256 amount) external {
+        require(amount <= yk_token.getDebtToken(from), "not enough debt somehow");       
+        yk_token. delegation_single_getback_amount(from, msg.sender, amount);      
+        
+    }
+    function dao_delegation_single_getback_all_yk(address from) external {
+        yk_token.delegation_single_getback_all(from, msg.sender);
+
+    }
+    function dao_delagation_multiple_getback_all_yk() external{
+        yk_token.delagation_multiple_getback_all(msg.sender);
+    }
+    function dao_clawback_single_yk(address to) external{
+        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
+        yk_token.clawback_single( to);
+    }
+    function dao_clawback_all_yk() external {
+        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
+        yk_token.clawback_all( );
+    }
 }                   
 
 
