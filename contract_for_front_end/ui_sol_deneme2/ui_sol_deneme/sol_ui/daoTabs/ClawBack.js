@@ -16,22 +16,22 @@ const ClawBack = ({
         Clawback YK Tokens
       </span>
       <br /><br />
-      <div class="form-check form-switch">
+      <div className="form-check form-switch">
         <input
-          class="form-check-input"
+          className="form-check-input"
           type="checkbox"
           id="flexSwitchCheckDefault"
           onClick={() => {
             setClawBackAllYK(!clawBackAllYK);
           }}
         />
-        <label class="form-check-label" for="flexSwitchCheckDefault">
+        <label className="form-check-label" for="flexSwitchCheckDefault">
           ClawBack From All Possible Addresses
         </label>
       </div>
       {!clawBackAllYK && (
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">
+        <div className="mb-3">
+          <label for="exampleInputEmail1" className="form-label">
             Wallet address
           </label>
           <input
@@ -40,11 +40,11 @@ const ClawBack = ({
               info.current = { ...info.current, addressYK: e.target.value };
             }}
             type="email"
-            class="form-control"
+            className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
           />
-          <div id="emailHelp" class="form-text text-white">
+          <div id="emailHelp" className="form-text text-white">
             ClawBack YK Tokens From This Address
           </div>
         </div>
@@ -52,7 +52,7 @@ const ClawBack = ({
       <br />
       <button
         type="button"
-        class="btn btn-primary"
+        className="btn btn-primary"
         onClick={() => {
           clawBackAllYK
             ? onClawBackYKFromAll()
@@ -68,22 +68,22 @@ const ClawBack = ({
         Clawback Voter Tokens
       </span>
       <br /><br />
-      <div class="form-check form-switch">
+      <div className="form-check form-switch">
         <input
-          class="form-check-input"
+          className="form-check-input"
           type="checkbox"
           id="flexSwitchCheckDefault2"
           onClick={() => {
             setClawBackAllVoter(!clawBackAllVoter);
           }}
         />
-        <label class="form-check-label" for="flexSwitchCheckDefault2">
+        <label className="form-check-label" for="flexSwitchCheckDefault2">
           ClawBack From All Possible Addresses
         </label>
       </div>
       {!clawBackAllVoter && (
-        <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">
+        <div className="mb-3">
+          <label for="exampleInputEmail1" className="form-label">
             Wallet address
           </label>
           <input
@@ -92,11 +92,11 @@ const ClawBack = ({
               info.current = { ...info.current, addressVoter: e.target.value };
             }}
             type="email"
-            class="form-control"
+            className="form-control"
             id="exampleInputEmail2"
             aria-describedby="emailHelp"
           />
-          <div id="emailHelp" class="form-text text-white">
+          <div id="emailHelp" className="form-text text-white">
             ClawBack Voter Tokens From This Address
           </div>
         </div>
@@ -104,7 +104,7 @@ const ClawBack = ({
       <br />
       <button
         type="button"
-        class="btn btn-primary"
+        className="btn btn-primary"
         onClick={() => {
           clawBackAllVoter
             ? onClawBackVoterFromAll()

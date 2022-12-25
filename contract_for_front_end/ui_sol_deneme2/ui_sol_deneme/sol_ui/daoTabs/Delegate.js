@@ -28,23 +28,23 @@ const Delegate = ({
       </span>
       <br />
       <br />
-      <div class="form-check form-switch">
+      <div className="form-check form-switch">
         <input
-          class="form-check-input"
+          className="form-check-input"
           type="checkbox"
           id="flexSwitchCheckDefault"
           onClick={() => {
             setDelegateAllYK(!delegateAllYK);
           }}
         />
-        <label class="form-check-label" for="flexSwitchCheckDefault">
+        <label className="form-check-label" for="flexSwitchCheckDefault">
           Delegate From All Possible Addresses
         </label>
       </div>
       {!delegateAllYK && (
         <>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">
+          <div className="mb-3">
+            <label for="exampleInputEmail1" className="form-label">
               Wallet address
             </label>
             <input
@@ -53,30 +53,30 @@ const Delegate = ({
                 info.current = { ...info.current, addressYK: e.target.value };
               }}
               type="email"
-              class="form-control"
+              className="form-control"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
             />
-            <div id="emailHelp" class="form-text text-white">
+            <div id="emailHelp" className="form-text text-white">
               Delegate YK Tokens From This Address
             </div>
           </div>
-          <div class="form-check form-switch">
+          <div className="form-check form-switch">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="flexSwitchCheckDefaultAmount"
               onClick={() => {
                 setDelegateAllFromAddressYK(!delegateAllFromAddressYK);
               }}
             />
-            <label class="form-check-label" for="flexSwitchCheckDefaultAmount">
+            <label className="form-check-label" for="flexSwitchCheckDefaultAmount">
               Delegate All of the Tokens
             </label>
           </div>
           {!delegateAllFromAddressYK && (
-            <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">
+            <div className="mb-3">
+              <label for="exampleInputEmail1" className="form-label">
                 Number of Tokens to Delegate
               </label>
               <input
@@ -85,11 +85,11 @@ const Delegate = ({
                   info.current = { ...info.current, amountYK: e.target.value };
                 }}
                 type="number"
-                class="form-control"
+                className="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
               />
-              <div id="emailHelp" class="form-text text-white">
+              <div id="emailHelp" className="form-text text-white">
                 Delegate This Number of Tokens From This Address
               </div>
             </div>
@@ -99,7 +99,7 @@ const Delegate = ({
       <br />
       <button
         type="button"
-        class="btn btn-primary"
+        className="btn btn-primary"
         onClick={() => {
           delegateAllYK
             ? onDelegateAllYK()
@@ -121,23 +121,23 @@ const Delegate = ({
       </span>
       <br />
       <br />
-      <div class="form-check form-switch">
+      <div className="form-check form-switch">
         <input
-          class="form-check-input"
+          className="form-check-input"
           type="checkbox"
           id="flexSwitchCheckDefault2"
           onClick={() => {
             setDelegateAllVoter(!delegateAllVoter);
           }}
         />
-        <label class="form-check-label" for="flexSwitchCheckDefault2">
+        <label className="form-check-label" for="flexSwitchCheckDefault2">
           Delegate From All Possible Addresses
         </label>
       </div>
       {!delegateAllVoter && (
         <>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">
+          <div className="mb-3">
+            <label for="exampleInputEmail1" className="form-label">
               Wallet address
             </label>
             <input
@@ -149,30 +149,30 @@ const Delegate = ({
                 };
               }}
               type="email"
-              class="form-control"
+              className="form-control"
               id="exampleInputEmail2"
               aria-describedby="emailHelp"
             />
-            <div id="emailHelp" class="form-text text-white">
+            <div id="emailHelp" className="form-text text-white">
               Delegate Voter Tokens From This Address
             </div>
           </div>
-          <div class="form-check form-switch">
+          <div className="form-check form-switch">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="flexSwitchCheckDefaultAmount2"
               onClick={() => {
                 setDelegateAllFromAddressVoter(!delegateAllFromAddressVoter);
               }}
             />
-            <label class="form-check-label" for="flexSwitchCheckDefaultAmount2">
+            <label className="form-check-label" for="flexSwitchCheckDefaultAmount2">
               Delegate All of the Tokens
             </label>
           </div>
           {!delegateAllFromAddressVoter && (
-            <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">
+            <div className="mb-3">
+              <label for="exampleInputEmail1" className="form-label">
                 Number of Tokens to Delegate
               </label>
               <input
@@ -184,11 +184,11 @@ const Delegate = ({
                   };
                 }}
                 type="email"
-                class="form-control"
+                className="form-control"
                 id="exampleInputEmail2"
                 aria-describedby="emailHelp"
               />
-              <div id="emailHelp" class="form-text text-white">
+              <div id="emailHelp" className="form-text text-white">
                 Delegate This Number of Tokens From This Address
               </div>
             </div>
@@ -199,7 +199,7 @@ const Delegate = ({
       <br />
       <button
         type="button"
-        class="btn btn-primary"
+        className="btn btn-primary"
         onClick={() => {
           delegateAllVoter
             ? onDelegateAllVoter()
