@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from "styled-components"
 import { useState, useEffect } from 'react'
+import Spinner from '../components/Spinner'
 
 const TextBoxProposal = styled.div`
     overflow: hidden;
@@ -11,10 +12,19 @@ const TextBoxProposal = styled.div`
     font-size: 1.5em;
 `;
 
+const TextBoxDescription = styled.div`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    font-size: 1.0em;
+`;
+
 const VoteOnProposals = ({onGetAllProposals, onVoteOnProposals}) => {
 
     const [all_props, setall_props]=useState([])
-    const [loaded, setLoaded]=useState([])
+    const [loaded, setLoaded]=useState(false)
     const [currAmountOfVotes, setcurrAmountOfVotes] = useState([])
 
     useEffect(() => {
@@ -72,6 +82,7 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnProposals}) => {
                         index % 3 === i ?            
                             <div key={index} className='card bg-black border border-white text-white p-5 my-2'>
                                 <TextBoxProposal>{element[index][0]}</TextBoxProposal><br/>
+                                <TextBoxDescription>{element[index][6]}</TextBoxDescription><br/>
                                 <label className='h6' style={{fontStyle:"italic"}}>Voting Power: {element[index][3]}</label><br/>
                                 {
                                     element[index][1].map((item,indx2) => (

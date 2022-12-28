@@ -3436,7 +3436,7 @@
         112
       ],
       "SUToken": [
-        4172
+        4354
       ],
       "creator": [
         931
@@ -3479,7 +3479,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 932,
-        "sourceUnit": 4173,
+        "sourceUnit": 4355,
         "src": "128:21:6",
         "symbolAliases": [],
         "unitAlias": ""
@@ -3514,7 +3514,7 @@
         ],
         "canonicalName": "creator",
         "contractDependencies": [
-          4172
+          4354
         ],
         "contractKind": "contract",
         "fullyImplemented": true,
@@ -3617,7 +3617,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SUToken_$4172",
+                        "typeIdentifier": "t_contract$_SUToken_$4354",
                         "typeString": "contract SUToken"
                       },
                       "typeName": {
@@ -3627,13 +3627,13 @@
                           "id": 885,
                           "name": "SUToken",
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 4172,
+                          "referencedDeclaration": 4354,
                           "src": "526:7:6"
                         },
-                        "referencedDeclaration": 4172,
+                        "referencedDeclaration": 4354,
                         "src": "526:7:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SUToken_$4172",
+                          "typeIdentifier": "t_contract$_SUToken_$4354",
                           "typeString": "contract SUToken"
                         }
                       },
@@ -3703,7 +3703,7 @@
                       "nodeType": "NewExpression",
                       "src": "545:11:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_creation_nonpayable$_t_string_memory_ptr_$_t_string_memory_ptr_$_t_address_$returns$_t_contract$_SUToken_$4172_$",
+                        "typeIdentifier": "t_function_creation_nonpayable$_t_string_memory_ptr_$_t_string_memory_ptr_$_t_address_$returns$_t_contract$_SUToken_$4354_$",
                         "typeString": "function (string memory,string memory,address) returns (contract SUToken)"
                       },
                       "typeName": {
@@ -3713,13 +3713,13 @@
                           "id": 888,
                           "name": "SUToken",
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 4172,
+                          "referencedDeclaration": 4354,
                           "src": "549:7:6"
                         },
-                        "referencedDeclaration": 4172,
+                        "referencedDeclaration": 4354,
                         "src": "549:7:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SUToken_$4172",
+                          "typeIdentifier": "t_contract$_SUToken_$4354",
                           "typeString": "contract SUToken"
                         }
                       }
@@ -3735,7 +3735,7 @@
                     "src": "545:55:6",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SUToken_$4172",
+                      "typeIdentifier": "t_contract$_SUToken_$4354",
                       "typeString": "contract SUToken"
                     }
                   },
@@ -3759,7 +3759,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SUToken_$4172",
+                        "typeIdentifier": "t_contract$_SUToken_$4354",
                         "typeString": "contract SUToken"
                       },
                       "typeName": {
@@ -3769,13 +3769,13 @@
                           "id": 896,
                           "name": "SUToken",
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 4172,
+                          "referencedDeclaration": 4354,
                           "src": "611:7:6"
                         },
-                        "referencedDeclaration": 4172,
+                        "referencedDeclaration": 4354,
                         "src": "611:7:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SUToken_$4172",
+                          "typeIdentifier": "t_contract$_SUToken_$4354",
                           "typeString": "contract SUToken"
                         }
                       },
@@ -3845,7 +3845,7 @@
                       "nodeType": "NewExpression",
                       "src": "633:11:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_creation_nonpayable$_t_string_memory_ptr_$_t_string_memory_ptr_$_t_address_$returns$_t_contract$_SUToken_$4172_$",
+                        "typeIdentifier": "t_function_creation_nonpayable$_t_string_memory_ptr_$_t_string_memory_ptr_$_t_address_$returns$_t_contract$_SUToken_$4354_$",
                         "typeString": "function (string memory,string memory,address) returns (contract SUToken)"
                       },
                       "typeName": {
@@ -3855,13 +3855,13 @@
                           "id": 899,
                           "name": "SUToken",
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 4172,
+                          "referencedDeclaration": 4354,
                           "src": "637:7:6"
                         },
-                        "referencedDeclaration": 4172,
+                        "referencedDeclaration": 4354,
                         "src": "637:7:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SUToken_$4172",
+                          "typeIdentifier": "t_contract$_SUToken_$4354",
                           "typeString": "contract SUToken"
                         }
                       }
@@ -3877,7 +3877,7 @@
                     "src": "633:61:6",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SUToken_$4172",
+                      "typeIdentifier": "t_contract$_SUToken_$4354",
                       "typeString": "contract SUToken"
                     }
                   },
@@ -3915,7 +3915,7 @@
                         "referencedDeclaration": 887,
                         "src": "705:8:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SUToken_$4172",
+                          "typeIdentifier": "t_contract$_SUToken_$4354",
                           "typeString": "contract SUToken"
                         }
                       },
@@ -3926,7 +3926,7 @@
                       "lValueRequested": false,
                       "memberName": "transferOwnership",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4145,
+                      "referencedDeclaration": 4327,
                       "src": "705:26:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$returns$__$",
@@ -3983,7 +3983,7 @@
                         "referencedDeclaration": 898,
                         "src": "754:11:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SUToken_$4172",
+                          "typeIdentifier": "t_contract$_SUToken_$4354",
                           "typeString": "contract SUToken"
                         }
                       },
@@ -3994,7 +3994,7 @@
                       "lValueRequested": false,
                       "memberName": "transferOwnership",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4145,
+                      "referencedDeclaration": 4327,
                       "src": "754:29:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$returns$__$",
@@ -4033,7 +4033,7 @@
                             "referencedDeclaration": 887,
                             "src": "822:8:6",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_SUToken_$4172",
+                              "typeIdentifier": "t_contract$_SUToken_$4354",
                               "typeString": "contract SUToken"
                             }
                           }
@@ -4041,7 +4041,7 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_SUToken_$4172",
+                              "typeIdentifier": "t_contract$_SUToken_$4354",
                               "typeString": "contract SUToken"
                             }
                           ],
@@ -4089,7 +4089,7 @@
                             "referencedDeclaration": 898,
                             "src": "841:11:6",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_SUToken_$4172",
+                              "typeIdentifier": "t_contract$_SUToken_$4354",
                               "typeString": "contract SUToken"
                             }
                           }
@@ -4097,7 +4097,7 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_SUToken_$4172",
+                              "typeIdentifier": "t_contract$_SUToken_$4354",
                               "typeString": "contract SUToken"
                             }
                           ],
@@ -4368,7 +4368,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-12-21T22:07:53.629Z",
+  "updatedAt": "2022-12-26T20:03:16.831Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

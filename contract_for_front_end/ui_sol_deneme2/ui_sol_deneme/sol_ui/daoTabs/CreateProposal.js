@@ -12,11 +12,11 @@ const CreateProposal = ({onCreateProposal}) => {
         <form>
             <label>Proposal Text: </label>
             <br/>
-            <textarea onChange={(e) => {{proposal.current = {...proposal.current, text: e.target.value}}}} style={{width:"80%", height:"80px", padding:"5px"}}/>
+            <textarea onChange={(e) => {{proposal.current = {...proposal.current, text: e.target.value}}}} style={{width:"80%", padding:"5px"}}/>
             <br/><br/>
             <label>Proposal Description: </label>
             <br/>
-            <input onChange={(e) => {{proposal.current = {...proposal.current, desc: e.target.value}}}} style={{width:"80%", padding:"5px"}}/>
+            <textarea onChange={(e) => {{proposal.current = {...proposal.current, desc: e.target.value}}}} style={{width:"80%", padding:"5px"}}/>
             <br/><br/>
             <button type="button" className='btn btn-secondary rounded-0' onClick={() => {let optionValues = proposal.current.options; optionValues.push(""); proposal.current = {...proposal.current, options: optionValues}; setInputList(inputList.concat(<div key={inputList.length}><br/><label>Option {inputList.length + 1}: </label><input required onChange={(e) => {let optionValues = proposal.current.options; optionValues[inputList.length] = e.target.value; proposal.current = {...proposal.current, options: optionValues}}} /></div>))}}>Add New Option</button>
             {inputList}

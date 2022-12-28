@@ -18,6 +18,7 @@ import CheckMyTokens from '../daoTabs/CheckMyTokens'
 import Spinner from '../components/Spinner'
 import ClawBack from '../daoTabs/ClawBack'
 import Delegate from '../daoTabs/Delegate'
+import DeleteDAO from '../daoTabs/DeleteDAO'
 
 export default function Dao(){
     const router = useRouter();
@@ -28,7 +29,7 @@ export default function Dao(){
     const [alertMessage,setAlertMessage] = useState({text: "", title: ""})
     const [daoInfo, setDaoInfo] = useState({name: "", description: "", total_voter_tokens: 0, total_yk_tokens: 0, total_proposals: 0, total_subdaos: 0})
     const [popupTrigger, setPopupTrigger] = useState(false)
-    const [selectedNavItem, setSelectedNavItem] = useState(9);
+    const [selectedNavItem, setSelectedNavItem] = useState(10);
     const dataDAO = require('../blockchain1/build/contracts/MyDAO.json');
     const dataToken = require('../blockchain1/build/contracts/SUToken.json');
     const dataFactory = require('../blockchain1/build/contracts/DAOFactory.json');
@@ -71,7 +72,7 @@ export default function Dao(){
     const init = async () => {
         let provider = window.ethereum;
         let selectedAccount;
-        console.log(address)
+        
         if (typeof provider !== 'undefined') {
             provider
                 .request({ method: 'eth_requestAccounts' })
@@ -105,25 +106,43 @@ export default function Dao(){
         let daoContract, daoFactoryContract, voterTokenContract, ykTokenContract;
 
         try{
-            daoContract=new web3.eth.Contract(
-                dataDAO["abi"],
-                address
-            );
-        }
-        catch(err){
-            setAlertMessage({text: "Incorrect DAO address", title: "Error"});
-            setPopupTrigger(true);
-            return;
-        }
-
-        try{
             daoFactoryContract=new web3.eth.Contract(
                 dataFactory["abi"],
                 '0x6FDF6349AD62e7eF0E111505B7b1bAe0eEC252d4'
             );
         }
         catch(err){
-            setAlertMessage({text: "Incorrect DAO factory address", title: "Error"});
+            setAlertMessage({text: "Invalid DAO factory address", title: "Error"});
+            setPopupTrigger(true);
+            return;
+        }
+
+        let daoExists;
+        await daoFactoryContract.methods
+          .dao_exists(address)
+          .call()
+          .then((result) => {
+            daoExists = result;
+          })
+          .catch((err) => {
+            setAlertMessage({ text: err.message, title: "Error" });
+            setPopupTrigger(true);
+          });
+        
+        if (!daoExists) {
+            setAlertMessage({ text: "DAO does not exist", title: "Error" });
+            setPopupTrigger(true);
+            return;
+        }
+
+        try{
+            daoContract=new web3.eth.Contract(
+                dataDAO["abi"],
+                address
+            );
+        }
+        catch(err){
+            setAlertMessage({text: "Invalid DAO address", title: "Error"});
             setPopupTrigger(true);
             return;
         }
@@ -146,7 +165,7 @@ export default function Dao(){
             );
         }
         catch(err){
-            setAlertMessage({text: "Incorrect voter token address", title: "Error"});
+            setAlertMessage({text: "Invalid voter token address", title: "Error"});
             setPopupTrigger(true);
             return;
         }
@@ -158,7 +177,7 @@ export default function Dao(){
             );
         }
         catch(err){
-            setAlertMessage({text: "Incorrect YK token address", title: "Error"});
+            setAlertMessage({text: "Invalid YK token address", title: "Error"});
             setPopupTrigger(true);
             return;
         }
@@ -172,7 +191,7 @@ export default function Dao(){
             await init();
         }
         let provider = window.ethereum;
-        console.log(address)
+        
         const web3 = new Web3(provider);
         let daoABI=dataDAO["abi"]
         let tempDaoContract
@@ -184,7 +203,7 @@ export default function Dao(){
             );
         }
         catch(err) {
-            setAlertMessage({text: "Incorrect DAO Address", title: "Error"});
+            setAlertMessage({text: "Invalid DAO Address", title: "Error"});
             setPopupTrigger(true);
             return;
         }
@@ -199,7 +218,6 @@ export default function Dao(){
             await init();
         }
         let provider = window.ethereum;
-        console.log(address)
         const web3 = new Web3(provider);
         let daoABI=dataDAO["abi"]
         
@@ -226,11 +244,17 @@ export default function Dao(){
         vote.forEach((element) => {
             element = String(element);
         });
-        var gas;
-        await getGasEstimation(contracts.daoContract, "createProposal", [String(name), String(description), vote, initial_votes, parseInt(power), 0]).then((result) => {gas = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         await contracts.daoContract.methods.createProposal(String(name), String(description),vote, initial_votes, parseInt(power), 0).send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully created a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return 0;
     }    
+
+    const deleteThisDAO = async () => {
+        if (!initialized) {
+            await init();
+        }
+        await contracts.daoContract.methods.delete_this_dao().send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully deleted the DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        return 0;
+    }
 
     const VoteOnAProposal = async (id,vote,vote_power) => {
         if (!initialized) {
@@ -269,6 +293,7 @@ export default function Dao(){
             await contracts.daoContract.methods.getProposalPower(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
             await contracts.daoContract.methods.getProposalType(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
             await contracts.daoContract.methods.votes(String(selectedAccount), i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+            await contracts.daoContract.methods.getProposalDescription().call().then((result) => {proposals[i][i].push(result[i])}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         }
         
         return proposals;
@@ -278,7 +303,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         await contracts.daoContract.methods.send_voter_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
@@ -286,7 +310,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         getGasEstimation(contracts.daoContract, "send_yk_tokens_to_address_yk_directly", [String(address), parseInt(amount)])
         await contracts.daoContract.methods.send_yk_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: selectedAccount}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
@@ -295,7 +318,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         let voterBalance
         await contracts.voterTokenContract.methods.balanceOf(String(selectedAccount)).call().then((result) => {voterBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return voterBalance
@@ -305,7 +327,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         let ykBalance
         await contracts.ykTokenContract.methods.balanceOf(String(selectedAccount)).call().then((result) => {ykBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return ykBalance
@@ -315,7 +336,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         let numChildren
         await contracts.daoFactoryContract.methods.num_children(String(address)).call().then((result) => {numChildren = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
 
@@ -330,7 +350,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         let parentDAOAddress
         await contracts.daoFactoryContract.methods.child_parent(String(address)).call().then((result) => {parentDAOAddress = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
 
@@ -341,8 +360,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
-        getGasEstimation(contracts.daoContract, "withdraw_yk_tokens", [parseInt(amount)])
         await contracts.daoContract.methods.withdraw_yk_tokens(parseInt(amount)).send({from: selectedAccount}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
@@ -350,9 +367,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
-        console.log(parseInt(amount))
-        console.log(selectedAccount)
         getGasEstimation(contracts.daoContract, "withdraw_yk_tokens", [parseInt(amount)])
         await contracts.daoContract.methods.withdraw_voter_tokens(parseInt(amount)).send({from: selectedAccount}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
@@ -361,7 +375,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         let shares
         await contracts.daoContract.methods.yk_shares_to_be_given(String(selectedAccount)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
@@ -371,7 +384,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         let shares
         await contracts.daoContract.methods.voter_shares_to_be_given(String(selectedAccount)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
@@ -381,7 +393,6 @@ export default function Dao(){
         if (!initialized) {
             await init();
         }
-        console.log(address)
         await contracts.daoFactoryContract.methods.createChildDAO(address, String(name), String(description), String(ykTokenName), String(ykTokenSymbol), String(voterTokenName), String(voterTokenSymbol)).send({from: selectedAccount}).then(() => {setAlertMessage({text: "successfully created child DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
@@ -466,12 +477,15 @@ export default function Dao(){
                     <CreateProposal onCreateProposal={CreateNewProposal}></CreateProposal>
                 :
                 selectedNavItem === 5 ?
-                    <CheckMyTokens onCheckYKBalance={getYKBalance} onCheckVoterBalance={getVoterBalance}></CheckMyTokens>
+                    <DeleteDAO onDeleteDAO={deleteThisDAO}></DeleteDAO>
                 :
                 selectedNavItem === 6 ?
+                    <CheckMyTokens onCheckYKBalance={getYKBalance} onCheckVoterBalance={getVoterBalance}></CheckMyTokens>
+                :
+                selectedNavItem === 7 ?
                     <WithdrawTokens onWithdrawVoterTokens={WithdrawVoterTokens} onWithdrawYKTokens={WithdrawYKTokens} onVoterSharesToBeGiven={GetVoterSharesToBeGiven} onYKSharesToBeGiven={GetYKSharesToBeGiven}></WithdrawTokens>
                 : 
-                selectedNavItem === 7 ?
+                selectedNavItem === 8 ?
                     <Delegate   onDelegateAllYK={DelegateAllYK}
                         onDelegateAllTokensFromAddressYK={DelegateAllFromAddressYK}
                         onDelegateSomeTokensFromAddressYK={DelegateSomeFromAddressYK}
@@ -479,13 +493,13 @@ export default function Dao(){
                         onDelegateAllTokensFromAddressVoter={DelegateAllFromAddressVoter}
                         onDelegateSomeTokensFromAddressVoter={DelegateSomeFromAddressVoter}></Delegate>
                 : 
-                selectedNavItem === 8 ?
+                selectedNavItem === 9 ?
                     <VoteOnProposals onVoteOnProposals={VoteOnAProposal} onGetAllProposals={GetAllProposals}></VoteOnProposals>
                 :
-                selectedNavItem === 9 ?
+                selectedNavItem === 10 ?
                     <Proposals onGetAllProposals={GetAllProposals}></Proposals>
                 :
-                selectedNavItem === 10 ?
+                selectedNavItem === 11 ?
                     <ViewSubDAOs onGetDAODescription={GetDaoDescription} onGetDAOName={GetDaoName} onGetSubDAOs={GetSubDAOs} onGetParentDAO={GetParentDAO}></ViewSubDAOs>
                 :
                 <></>
@@ -541,6 +555,9 @@ export default function Dao(){
                             <li className="nav-item">
                                 <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(4)}}>Create New Proposal</p>
                             </li>
+                            <li className="nav-item">
+                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(5)}}>Delete DAO</p>
+                            </li>
                         </ul>
                         <br/><br/>
                         <ul className="nav flex-column my-2">
@@ -548,13 +565,13 @@ export default function Dao(){
                                 <h2 className='nav-link text-white'>YK and Member Functions</h2>
                             </li>
                             <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(5)}}>Check My Tokens</p>
+                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(6)}}>Check My Tokens</p>
                             </li>
                             <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(6)}}>Withdraw Tokens</p>
+                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(7)}}>Withdraw Tokens</p>
                             </li>
                             <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(7)}}>Delegate Tokens</p>
+                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(8)}}>Delegate Tokens</p>
                             </li>
                         </ul>
                         <br/><br/>
@@ -563,7 +580,7 @@ export default function Dao(){
                                 <h2 className='nav-link text-white'>Member Functions</h2>
                             </li>
                             <li className="nav-item">
-                                <p className='nav-link' style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(8)}}>Vote on Proposals</p>
+                                <p className='nav-link' style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(9)}}>Vote on Proposals</p>
                             </li>
                         </ul>
                         <br/><br/>
@@ -572,10 +589,10 @@ export default function Dao(){
                                 <h2 className='nav-link text-white'>Non-Member Functions</h2>
                             </li>
                             <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(9)}}>View Proposals</p>
+                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(10)}}>View Proposals</p>
                             </li>
                             <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(10)}}>View SubDAOs</p>
+                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(11)}}>View SubDAOs</p>
                             </li>
                         </ul>
                         <br/><br/>

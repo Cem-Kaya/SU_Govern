@@ -38,7 +38,12 @@ const Proposals = ({onGetAllProposals}) => {
         <div key={index} className='container border border-white text-white p-5 mt-5'>
             <div className='row'>  
                 <div className='col-12'>
-                    <label>{element[index][0]}</label><br/><br/>
+                    <label className='h4'>{element[index][0]}</label><br/><br/>
+                </div>
+            </div>
+            <div className='row'>  
+                <div className='col-12'>
+                    <label>{element[index][6]}</label><br/><br/>
                 </div>
             </div>
             <div className='row'>

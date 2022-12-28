@@ -6,9 +6,13 @@ import Spinner from "../components/Spinner";
 import Card from "../components/Card";
 import { SimpleGrid } from "@chakra-ui/react";
 import Header from "../components/Header";
+
 export default function Home() {
   const [alertMessage, setAlertMessage] = useState({ text: "", title: "" });
   const [popupTrigger, setPopupTrigger] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+  const [daoFactoryContract, setDaoFactoryContract] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState("");
   const [all_daos, setall_daos] = useState([]);
   const [topDAOAddress, setTopDAOAddress] = useState("");
   const dataFactory = require("../blockchain1/build/contracts/DAOFactory.json");
@@ -16,14 +20,11 @@ export default function Home() {
 
   const [loaded, setLoaded] = useState(false);
 
-  let web3js;
-  let daoFactoryContract;
-  let selectedAccount;
-
   useEffect(() => {
     const fetchNextDaoId = async () => {
-      if (!isInitialized) {
+      if (!initialized) {
         await init();
+        setInitialized(true);
       }
       let nextDaoId;
       await daoFactoryContract.methods
@@ -40,8 +41,9 @@ export default function Home() {
     };
 
     const fetchAllDaos = async () => {
-      if (!isInitialized) {
+      if (!initialized) {
         await init();
+        setInitialized(true);
       }
       const numOfDaos = await fetchNextDaoId();
       let provider = window.ethereum;
@@ -71,28 +73,45 @@ export default function Home() {
             setAlertMessage({ text: err.message, title: "Error" });
             setPopupTrigger(true);
           });
-        let daoContract = new web3.eth.Contract(daoABI, daoAddress);
-        await daoContract.methods
-          .dao_name()
+
+        let daoExists = false;
+        await daoFactoryContract.methods
+          .dao_exists(daoAddress)
           .call()
           .then((result) => {
-            daoName = result;
+            daoExists = result;
           })
           .catch((err) => {
             setAlertMessage({ text: err.message, title: "Error" });
             setPopupTrigger(true);
           });
-        await daoContract.methods
-          .dao_description()
-          .call()
-          .then((result) => {
-            daoDescription = result;
-          })
-          .catch((err) => {
-            setAlertMessage({ text: err.message, title: "Error" });
-            setPopupTrigger(true);
-          });
-        allDaos.push([daoAddress, daoName, daoDescription]);
+
+        if (daoExists) {
+          let daoContract = new web3.eth.Contract(daoABI, daoAddress);
+          
+          await daoContract.methods
+            .dao_name()
+            .call()
+            .then((result) => {
+              daoName = result;
+            })
+            .catch((err) => {
+              setAlertMessage({ text: err.message, title: "Error" });
+              setPopupTrigger(true);
+            });
+          
+          await daoContract.methods
+            .dao_description()
+            .call()
+            .then((result) => {
+              daoDescription = result;
+            })
+            .catch((err) => {
+              setAlertMessage({ text: err.message, title: "Error" });
+              setPopupTrigger(true);
+            });
+          allDaos.push([daoAddress, daoName, daoDescription]);
+        }
       }
       setall_daos(allDaos);
       setLoaded(true);
@@ -105,7 +124,6 @@ export default function Home() {
   const searchChange = async (event) => {
     console.log(event);
   };
-  let isInitialized = false;
 
   const connectWallethandler = async () => {
     if (
@@ -158,11 +176,22 @@ export default function Home() {
 
     let daoFactoryABI = dataFactory["abi"];
 
-    daoFactoryContract = new web3.eth.Contract(
-      daoFactoryABI,
-      "0x6FDF6349AD62e7eF0E111505B7b1bAe0eEC252d4"
-    );
-    isInitialized = true;
+    try {
+      daoFactoryContract = new web3.eth.Contract(
+        daoFactoryABI,
+        "0x6FDF6349AD62e7eF0E111505B7b1bAe0eEC252d4"
+      );
+    } catch (err) {
+      setAlertMessage({
+        text: "Invalid DAO factory address",
+        title: "Error",
+      });
+      setPopupTrigger(true);
+      return;
+    }
+
+    setDaoFactoryContract(daoFactoryContract);
+    setSelectedAccount(selectedAccount);
   };
 
   return (
