@@ -155,7 +155,7 @@ contract DAOFactory {
         require(msg.sender == address(to_be_deleted), "Don't even try");
 
 
-        
+        num_children[child_parent[to_be_deleted]] -= 1;
         for (uint i = 0 ; i < parent_child_daos[to_be_deleted].length; i++){
             parent_child_daos[to_be_deleted][i].delete_this_dao();            
         }
