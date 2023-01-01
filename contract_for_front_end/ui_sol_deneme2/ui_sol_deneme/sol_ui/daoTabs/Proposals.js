@@ -45,6 +45,9 @@ const Proposals = ({onGetAllProposals}) => {
                 <div className='col-12'>
                     <label>{element[index][6]}</label><br/><br/>
                 </div>
+                <div className='col-12'>
+                    <label>{element[index][4].charAt(0).toUpperCase() + element[index][4].slice(1)} proposal</label><br/><br/>
+                </div>
             </div>
             <div className='row'>
                 <div className='col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12'>

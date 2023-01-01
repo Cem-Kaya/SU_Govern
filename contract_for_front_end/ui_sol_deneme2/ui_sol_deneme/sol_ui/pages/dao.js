@@ -82,7 +82,7 @@ export default function Dao(){
     
             window.ethereum.on('accountsChanged', function (accounts) {
                 selectedAccount = accounts[0];
-                setAlertMessage({text: `Selected account changed to ${selectedAccount}`, title: "Warning"});
+                setAlertMessage({text: `Selected account changed to ${selectedAccount}`, title: "Success"});
                 setPopupTrigger(true)
             });
         }
@@ -272,7 +272,7 @@ export default function Dao(){
         return daoDescription;
     }
 
-    const createNewProposal =async (name, description, vote, power)=> {
+    const createNewProposal =async (name, description, vote, power, type)=> {
         
         if (!initialized) {
             await init();
@@ -288,8 +288,8 @@ export default function Dao(){
         });
         let gasLimit;
         
-        await getGasLimit(contracts.daoContract, "createProposal", [String(name), String(description), vote, initial_votes, parseInt(power), 0]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
-        await contracts.daoContract.methods.createProposal(String(name), String(description),vote, initial_votes, parseInt(power), 0).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully created a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        await getGasLimit(contracts.daoContract, "createProposal", [String(name), String(description), vote, initial_votes, parseInt(power), parseInt(type)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        await contracts.daoContract.methods.createProposal(String(name), String(description),vote, initial_votes, parseInt(power), parseInt(type)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully created a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return 0;
     }    
 
@@ -303,7 +303,7 @@ export default function Dao(){
         return 0;
     }
 
-    const voteOnAProposal = async (id,vote,vote_power) => {
+    const voteOnNormalProposal = async (id,vote,vote_power) => {
         if (!initialized) {
             await init();
         } 
@@ -317,6 +317,26 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "vote_power", [parseInt(id), vote, vote_power]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         await contracts.daoContract.methods.vote_power(parseInt(id), vote, vote_power).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        
+        return 0;
+    }
+
+    const voteOnWeightedProposal = async (id,vote,vote_power,weight) => {
+        if (!initialized) {
+            await init();
+        } 
+        parseInt(weight);
+
+
+        vote.forEach(element => {
+            element = String(element)
+        });
+        vote_power.forEach(element => {
+            element = parseInt(element)
+        });
+        let gasLimit;
+        await getGasLimit(contracts.daoContract, "vote_power_weighted", [parseInt(id), vote, vote_power, weight]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        await contracts.daoContract.methods.vote_power_weighted(parseInt(id), vote, vote_power, weight).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         
         return 0;
     }
@@ -372,6 +392,8 @@ export default function Dao(){
         }
         let voterBalance
         await contracts.voterTokenContract.methods.balanceOf(String(selectedAccount)).call().then((result) => {voterBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        voterBalance = voterBalance / Math.pow(10, 18)
+        console.log(voterBalance)
         return voterBalance
     }
 
@@ -381,6 +403,7 @@ export default function Dao(){
         }
         let ykBalance
         await contracts.ykTokenContract.methods.balanceOf(String(selectedAccount)).call().then((result) => {ykBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        ykBalance = ykBalance / Math.pow(10, 18)
         return ykBalance
     }
 
@@ -571,7 +594,7 @@ export default function Dao(){
                         onDelegateSomeTokensFromAddressVoter={delegateSomeFromAddressVoter}></Delegate>
                 : 
                 selectedNavItem === 9 ?
-                    <VoteOnProposals onVoteOnProposals={voteOnAProposal} onGetAllProposals={getAllProposals}></VoteOnProposals>
+                    <VoteOnProposals onGetVoterTokenBalance={getVoterBalance} onVoteOnNormalProposals={voteOnNormalProposal} onVoteOnWeightedProposals={voteOnWeightedProposal} onGetAllProposals={getAllProposals}></VoteOnProposals>
                 :
                 selectedNavItem === 10 ?
                     <Proposals onGetAllProposals={getAllProposals}></Proposals>

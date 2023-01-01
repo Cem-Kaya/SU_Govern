@@ -3,6 +3,7 @@ import { useState, useRef } from 'react'
 
 const CreateProposal = ({onCreateProposal}) => {
     const [inputList, setInputList] = useState([]);
+    const [type, setType] = useState(0);
     const proposal = useRef({text: "", desc: "", options: [], voting_power: 0});
   return (
     <>
@@ -30,9 +31,28 @@ const CreateProposal = ({onCreateProposal}) => {
             <br/><br/>
             <label>Voting Power: </label>
             <input type="number" onChange={(e) => {proposal.current = {...proposal.current, voting_power: e.target.value}}}/>
+            <br/><br/>
+            <div className="form-check form-switch">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="flexSwitchCheckType"
+                onClick={() => {
+                  setType(type === 0 ? 1 : 0);
+                }}
+              />
+              <label className="form-check-label" for="flexSwitchCheckType">
+                {
+                  type === 0 ?
+                  "Proposal Type: Normal"
+                  :
+                  "Proposal Type: Weighted"
+                }
+              </label>
+            </div>
             <br/>
             <br/>
-            <button type="button" className='btn btn-primary rounded-0' onClick={() => {onCreateProposal(proposal.current.text, proposal.current.desc, proposal.current.options, proposal.current.voting_power); /*setProposal({text: "", options: [], voting_power: 0})*/}}>Create This Proposal</button>
+            <button type="button" className='btn btn-primary rounded-0' onClick={() => {onCreateProposal(proposal.current.text, proposal.current.desc, proposal.current.options, proposal.current.voting_power, type);}}>Create This Proposal</button>
         </form>
     </div>
     </>

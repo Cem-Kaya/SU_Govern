@@ -21,12 +21,12 @@ const CheckMyTokens = ({ onCheckYKBalance, onCheckVoterBalance }) => {
   ) : (
     <div className="container m-3">
       <label className="text-white">
-        Voter Balance: {voterBalance / Math.pow(10, 18)} Token
+        Voter Balance: {voterBalance} Token
       </label>
       <br />
       <br />
       <label className="text-white">
-        YK Balance: {ykBalance / Math.pow(10, 18)} Token
+        YK Balance: {ykBalance} Token
       </label>
     </div>
   );

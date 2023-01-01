@@ -21,18 +21,23 @@ const TextBoxDescription = styled.div`
     font-size: 1.0em;
 `;
 
-const VoteOnProposals = ({onGetAllProposals, onVoteOnProposals}) => {
+const VoteOnProposals = ({onGetAllProposals, onVoteOnNormalProposals, onVoteOnWeightedProposals, onGetVoterTokenBalance}) => {
 
     const [all_props, setall_props]=useState([])
     const [loaded, setLoaded]=useState(false)
+    const [amountOfVoterTokens, setamountOfVoterTokens] = useState(0)
     const [currAmountOfVotes, setcurrAmountOfVotes] = useState([])
+    const [weights, setWeights] = useState([])
 
     useEffect(() => {
         const get_all_proposals = async () => {
             try {
                 const proposals = await onGetAllProposals();
+                const voterTokenBalance = await onGetVoterTokenBalance();
+                setamountOfVoterTokens(voterTokenBalance);
                 setall_props(proposals);
                 setcurrAmountOfVotes(setcurrVotesArrayInitialize(proposals));
+                setWeights(setcurrWeightsInitialize(proposals, voterTokenBalance));
                 setLoaded(true);
             } catch (err) {
                 console.error(err.message);
@@ -50,6 +55,15 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnProposals}) => {
             }
         }
         return selectionInitializer
+    }
+
+    const setcurrWeightsInitialize = (props, tokenamount) => {
+        let weightsInitializer = []
+        for(var i = 0; i < props.length; i++){
+            weightsInitializer.push(tokenamount)
+        }
+        console.log(weightsInitializer)
+        return weightsInitializer
     }
 
     const getTotalCount = (slctArray) => {
@@ -105,6 +119,30 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnProposals}) => {
                                     ))    
                                 }
                                 <br/>
+                                {      
+                                element[index][4] === "weighted" ?           
+                                <div  className='row'> 
+                                    <div className='col-4 col-sm-3'>
+                                        <label htmlFor="html">weight</label>
+                                    </div>   
+                                    <div className='col-8 col-sm-9'>
+                                        <div className="input-group mb-3">
+                                            <div className="input-group-append">
+                                                <button type="button" className='btn btn-danger rounded-0' disabled={element[index][5] === true || weights[index] === 0} onClick={() => {let selCopy = [...weights]; selCopy[index] = selCopy[index] - 1; setWeights(selCopy)}}>-</button>
+                                            </div>
+                                            <input type="number" disabled={element[index][5] === true} className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={weights[index]}/>
+                                            <div className="input-group-append">
+                                                <button type="button" className='btn btn-primary rounded-0' disabled={element[index][5] === true || weights[index] == amountOfVoterTokens} onClick={() => {let selCopy = [...weights]; selCopy[index] = selCopy[index] + 1; setWeights(selCopy)}}>+</button><br/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                :
+                                <></>
+                                }
+                                <br/>
+                                <TextBoxDescription>{element[index][4].charAt(0).toUpperCase() + element[index][4].slice(1) + " proposal"}</TextBoxDescription>
+                                <br/>
                                 {
                                     element[index][5] === true ?
                                         <label className='h6'>You have already voted on this proposal</label>
@@ -112,8 +150,12 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnProposals}) => {
                                         <label className='h6'>Total Votes: {getTotalCount(currAmountOfVotes[index])}</label>
                                 }
                                 <br/>
-                                <button disabled={element[index][5]} type="button" className='btn btn-primary btn-block' onClick={ () => {
-                                onVoteOnProposals(index.toString(),element[index][1],currAmountOfVotes[index])}}
+                                <button disabled={element[index][5]} type="button" className='btn btn-primary btn-block' 
+                                onClick={ () => { element[index][4] === "normal" ?
+                                onVoteOnNormalProposals(index.toString(),element[index][1],currAmountOfVotes[index])
+                                :
+                                onVoteOnWeightedProposals(index.toString(),element[index][1],currAmountOfVotes[index],weights[index])
+                                }}
                                 > Vote </button>
                                 <br/>
                             </div>
