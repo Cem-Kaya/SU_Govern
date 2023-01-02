@@ -125,28 +125,6 @@ export default function Home() {
     console.log(event);
   };
 
-  const connectWallethandler = async () => {
-    if (
-      typeof window !== "undefined" &&
-      typeof window.ethereum !== "undefined"
-    ) {
-      try {
-        window.ethereum.request({ method: "eth_requestAccounts" });
-        web3js = new Web3(window.ethereum);
-        setAlertMessage({
-          text: "Successfully connected to a wallet",
-          title: "Success",
-        });
-        setPopupTrigger(true);
-      } catch (err) {
-        setAlertMessage({ text: err.message, title: "Error" });
-        setPopupTrigger(true);
-      }
-    } else {
-      setAlertMessage({ text: "Please install Metamask", title: "Error" });
-      setPopupTrigger(true);
-    }
-  };
 
   const init = async () => {
     let provider = window.ethereum;
@@ -193,7 +171,6 @@ export default function Home() {
     setDaoFactoryContract(daoFactoryContract);
     setSelectedAccount(selectedAccount);
   };
-
   return (
     <div>
       <Head>
@@ -206,12 +183,12 @@ export default function Home() {
           crossOrigin="anonymous"
         ></link>
       </Head>
-      <Header WalletConnect={connectWallethandler} logged={false} />
-      <div>
+      <Header logged={selectedAccount} />
+      <div className="page">
         {!loaded ? (
           <Spinner></Spinner>
         ) : (
-          <SimpleGrid minChildWidth="20vw" spacing="40px">
+          <SimpleGrid  columns={1} spacing="40px">
             {all_daos.map((dao, index) => {
               return (
                 <Card

@@ -19,6 +19,8 @@ import Spinner from '../components/Spinner'
 import ClawBack from '../daoTabs/ClawBack'
 import Delegate from '../daoTabs/Delegate'
 import DeleteDAO from '../daoTabs/DeleteDAO'
+import Header from '../components/Header'
+import Sidebar from '../components/SideBar'
 
 export default function Dao(){
     const router = useRouter();
@@ -612,92 +614,15 @@ export default function Dao(){
             <meta name="description" content="A blockchain dao app" />
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossOrigin="anonymous"></link>
         </Head>
-        <div className='bg-black' style={{minHeight:"100vh"}}>
+        <div style={{minHeight:"100vh"}}>
             {
                 !initialized?
                 <Spinner></Spinner>
                 :
                 <div className="row mx-0">
-                    <div className="col-xl-2 col-lg-3 col-md-3 col-sm-4 col-xs-6">
-                        <div className='container p-2'>
-                            <nav className="navbar navbar-expand-lg navbar-dark bg-black">
-                                <img className="navbar-brand" alt='dao-symbol' width={ "48px"} src="https://previews.123rf.com/images/mingirov/mingirov1609/mingirov160900049/62776269-silver-chinese-calligraphy-translation-meaning-dao-tao-taoism-icon-on-black-background-vector-illust.jpg"/>
-                                <span className="align-text-bottom mt-3">
-                                    <a className="nav-link text-danger" href="/"><u>Go Back</u></a>
-                                </span>
-                            </nav>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2"/>
-                                <div className="input-group-append">
-                                    <button className="btn btn-secondary btn-outline-white rounded-0" type="button">Button</button>
-                                </div>
-                            </div>
-                            <div className="input-group-append" id="list-tab" role="tablist">
-                                <button onClick={ connectWallethandler }  className="btn bg-transparent border border-white text-white mb-2" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="home">Connect Wallet</button>
-                            </div>
-                        </div>
-                        <ul className="nav flex-column my-2">
-                            <li className="nav-item">
-                                <h2 className='nav-link text-white'>Administrative</h2>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(0)}}>Create a SubDAO</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(1)}}>Assign a New YK</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(2)}}>ClawBack Tokens</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(3)}}>Send Voter Token</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(4)}}>Create New Proposal</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => { setSelectedNavItem(5)}}>Delete DAO</p>
-                            </li>
-                        </ul>
-                        <br/><br/>
-                        <ul className="nav flex-column my-2">
-                            <li className="nav-item">
-                                <h2 className='nav-link text-white'>YK and Member Functions</h2>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(6)}}>Check My Tokens</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(7)}}>Withdraw Tokens</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(8)}}>Delegate Tokens</p>
-                            </li>
-                        </ul>
-                        <br/><br/>
-                        <ul className="nav flex-column my-2">
-                            <li className="nav-item">
-                                <h2 className='nav-link text-white'>Member Functions</h2>
-                            </li>
-                            <li className="nav-item">
-                                <p className='nav-link' style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(9)}}>Vote on Proposals</p>
-                            </li>
-                        </ul>
-                        <br/><br/>
-                        <ul className="nav flex-column my-2">
-                            <li className="nav-item">
-                                <h2 className='nav-link text-white'>Non-Member Functions</h2>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(10)}}>View Proposals</p>
-                            </li>
-                            <li className="nav-item">
-                                <p className="nav-link" style={{cursor:"pointer"}} onClick={() => {setSelectedNavItem(11)}}>View SubDAOs</p>
-                            </li>
-                        </ul>
-                        <br/><br/>
-                    </div>    
-                    <div className="col-xl-10 col-lg-9 col-md-9 col-sm-8 col-xs-6">
+                        <Header WalletConnect={connectWallethandler} logged={true}/>
+                    <div className='page dao-page'>
+                    <Sidebar/>
                         <div className="container" style={{padding:"30px"}}>
                                 <div className="row">
                                     <div className="col-xl-4 col-lg-3 col-md-2 col-sm-1 col-xs-1"></div>

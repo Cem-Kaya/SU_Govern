@@ -2,6 +2,7 @@ html,
 body {
   padding: 0;
   margin: 0;
+  color: black;
   font-family:'Montserrat', sans-serif;
 }
 
@@ -12,4 +13,17 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.page{
+  width: 80%;
+  margin: auto;
+}
+/*TODO: DISARI CIKAR */
+.dao-page{
+  display: flex;
+
+}
+.sidebar{
+  width: 20vw;
 }

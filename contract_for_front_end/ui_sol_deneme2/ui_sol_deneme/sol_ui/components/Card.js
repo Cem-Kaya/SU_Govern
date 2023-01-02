@@ -1,15 +1,11 @@
 import React, { Component, useState } from "react";
 
-class Card extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
+ function Card({address,index,title,text}) {  
     return (
-      <a href={this.props.address}>
+      <a href={address}> 
+      {/* className="item-card-link"  */}
         <div
-          key={this.props.index}
+          key={index}
           style={{ cursor: "pointer" }}
         >
           <div className="item-card">
@@ -21,13 +17,12 @@ class Card extends Component {
               />
             </div>
             <div className="card-text">
-              <h3 className="card-title">{this.props.title}</h3>
-              <p className="card-desc">{this.props.text}</p>
+              <h3 className="card-title">{title}</h3>
+              <p className="card-desc">{text}</p>
             </div>
           </div>
         </div>
       </a>
     );
   }
-}
 export default Card;

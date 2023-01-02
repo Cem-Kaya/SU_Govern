@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { IconMenu2, IconX } from "@tabler/icons";
 
-function Header(WalletConnect, logged) {
+function Header({WalletConnect,logged}) {
   const [hamburger, setHamburger] = useState(false);
 
   const handleHamburger = () => {
     setHamburger(!hamburger);
   };
+
+
 
   return (
     <>
@@ -23,12 +25,12 @@ function Header(WalletConnect, logged) {
           <a className="Header-link" href="/docs">
           Wiki
         </a>
-
         </div>
         {logged ? (
-          <div>Wallet Connected</div>
+          <div className="Header-link Wallet">Connected</div> 
+          // TODO: Disconnect ekle ve ikonlastir
         ) : (
-          <div onClick={WalletConnect}>Wallet Connect</div>
+          <div className="Wallet" onClick={WalletConnect}>Wallet Connect</div>
         )}
       </div>
 
@@ -53,9 +55,9 @@ function Header(WalletConnect, logged) {
               </a>
             </div>
             {logged ? (
-              <div>Wallet Connected</div>
+              <div className="Wallet">Connected</div>
             ) : (
-              <div onClick={WalletConnect}>Wallet Connect</div>
+              <div className="Wallet" onClick={WalletConnect}>Wallet Connect</div>
             )}
           </div>
         </div>

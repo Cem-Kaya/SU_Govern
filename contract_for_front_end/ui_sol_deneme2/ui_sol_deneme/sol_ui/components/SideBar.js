@@ -1,58 +1,170 @@
 import { redirect } from "next/dist/server/api-utils";
 import React, { Component, useState } from "react";
 import Button from "./Button";
-class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-  render() {
-    return (
-          <div
-            className="col-2"
-            style={{ borderRight: "2px solid #4D5674", minHeight: "100vh" }}
+function Sidebar() {
+  return (
+    <div className="sidebar">
+      <ul className="nav flex-column my-2">
+        <li className="nav-item">
+          <h2 className="nav-link text-black">Administrative</h2>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(0);
+            }}
           >
-            <div className="container-fluid p-2">
-              <nav className="navbar navbar-expand-lg navbar-dark p-2">
-                <img
-                  className="navbar-brand"
-                  width={"100%"}
-                  src="https://www.sabanciuniv.edu/sites/default/files/logo_sabancicmyk.jpg"
-                />
-              </nav>
-              <div className="input-group mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  onChange={this.props.search}
-                  style={{ borderRadius: "36px" }}
-                  placeholder="Search"
-                  aria-label="Recipient's username"
-                  aria-describedby="basic-addon2"
-                />
-                {/* <div className="input-group-append">
-                      <button className="btn btn-secondary btn-outline-white rounded-0" type="button">Button</button>
-                    </div> */}
-              </div>
-              <div className="list-group" id="list-tab" role="tablist">
-                <button
-                  onClick={this.props.connectWallethandler}
-                  className="list-group-item list-group-item-action rounded-0 active mb-2"
-                  id="list-home-list"
-                  data-bs-toggle="list"
-                  href="#list-home"
-                  role="tab"
-                  aria-controls="home"
-                >
-                  Connect Wallet
-                </button>
-                {/* <button className="list-group-item list-group-item-action rounded-0 mb-2" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</button> */}
-                <Button svg={'./doc.svg'} alt={'Doc'} name={'Documentation'}/>
-                <Button svg={'./feedback.svg'} alt={'Feed'} name={'Feedback'}/>
-              </div>
-            </div>
-          </div>
-    );
-  }
+            Create a SubDAO
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(1);
+            }}
+          >
+            Assign a New YK
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(2);
+            }}
+          >
+            ClawBack Tokens
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(3);
+            }}
+          >
+            Send Voter Token
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(4);
+            }}
+          >
+            Create New Proposal
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(5);
+            }}
+          >
+            Delete DAO
+          </p>
+        </li>
+      </ul>
+      <br />
+      <br />
+      <ul className="nav flex-column my-2">
+        <li className="nav-item">
+          <h2 className="nav-link text-black">YK and Member Functions</h2>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(6);
+            }}
+          >
+            Check My Tokens
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(7);
+            }}
+          >
+            Withdraw Tokens
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(8);
+            }}
+          >
+            Delegate Tokens
+          </p>
+        </li>
+      </ul>
+      <br />
+      <br />
+      <ul className="nav flex-column my-2">
+        <li className="nav-item">
+          <h2 className="nav-link text-black">Member Functions</h2>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(9);
+            }}
+          >
+            Vote on Proposals
+          </p>
+        </li>
+      </ul>
+      <br />
+      <br />
+      <ul className="nav flex-column my-2">
+        <li className="nav-item">
+          <h2 className="nav-link text-black">Non-Member Functions</h2>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(10);
+            }}
+          >
+            View Proposals
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
+            className="nav-link"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(11);
+            }}
+          >
+            View SubDAOs
+          </p>
+        </li>
+      </ul>
+      <br />
+      <br />
+    </div>
+  );
 }
 export default Sidebar;
