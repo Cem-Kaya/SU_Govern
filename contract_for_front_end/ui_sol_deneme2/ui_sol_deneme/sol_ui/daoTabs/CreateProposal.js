@@ -11,7 +11,7 @@ const CreateProposal = ({onCreateProposal}) => {
     <div className='col-8 border border-light text-white p-5'>
         <h2 className='title text-white'><u>CREATE NEW PROPOSAL</u></h2>
         <form>
-            <label>Proposal Text: </label>
+            <label>Proposal Title: </label>
             <br/>
             <textarea onChange={(e) => {{proposal.current = {...proposal.current, text: e.target.value}}}} style={{width:"80%", padding:"5px"}}/>
             <br/><br/>

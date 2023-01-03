@@ -1,7 +1,7 @@
 import { redirect } from "next/dist/server/api-utils";
 import React, { Component, useState } from "react";
 import Button from "./Button";
-function Sidebar() {
+function Sidebar({setSelectedNavItem}) {
   return (
     <div className="sidebar">
       <ul className="nav flex-column my-2">
