@@ -11,8 +11,8 @@ const ClawBack = ({
   const [clawBackAllVoter, setClawBackAllVoter] = useState(false);
   const info = useRef({ addressYK: "", addressVoter: "" });
   return (
-    <div className="text-white">
-      <span className="title text-white" id="inputGroup-sizing-default">
+    <div className="text-black">
+      <span className="title text-black" id="inputGroup-sizing-default">
         Clawback YK Tokens
       </span>
       <br /><br />
@@ -44,12 +44,12 @@ const ClawBack = ({
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
           />
-          <div id="emailHelp" className="form-text text-white">
+          <div id="emailHelp" className="form-text text-black">
             ClawBack YK Tokens From This Address
           </div>
         </div>
       )}
-      <br />
+      
       <button
         type="button"
         className="btn btn-primary"
@@ -63,8 +63,9 @@ const ClawBack = ({
       </button>
       <br />
       <br />
+      <br />
 
-      <span className="title text-white" id="inputGroup-sizing-default">
+      <span className="title text-black" id="inputGroup-sizing-default">
         Clawback Voter Tokens
       </span>
       <br /><br />
@@ -96,12 +97,11 @@ const ClawBack = ({
             id="exampleInputEmail2"
             aria-describedby="emailHelp"
           />
-          <div id="emailHelp" className="form-text text-white">
+          <div id="emailHelp" className="form-text text-black">
             ClawBack Voter Tokens From This Address
           </div>
         </div>
       )}
-      <br />
       <button
         type="button"
         className="btn btn-primary"
@@ -113,6 +113,7 @@ const ClawBack = ({
       >
         ClawBack Voter Tokens
       </button>
+      <br />
       <br />
       <br />
     </div>

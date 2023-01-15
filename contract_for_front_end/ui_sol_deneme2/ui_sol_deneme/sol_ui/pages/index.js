@@ -11,8 +11,8 @@ export default function Home() {
   const [alertMessage, setAlertMessage] = useState({ text: "", title: "" });
   const [popupTrigger, setPopupTrigger] = useState(false);
   const [initialized, setInitialized] = useState(false);
-  const [daoFactoryContract, setDaoFactoryContract] = useState("");
-  const [selectedAccount, setSelectedAccount] = useState("");
+  const [daoFactoryContract, setDaoFactoryContract] = useState(undefined);
+  const [walletAddress, setWalletAddress] = useState("");
   const [all_daos, setall_daos] = useState([]);
   const [topDAOAddress, setTopDAOAddress] = useState("");
   const dataFactory = require("../blockchain1/build/contracts/DAOFactory.json");
@@ -125,6 +125,24 @@ export default function Home() {
     console.log(event);
   };
 
+  const connectWallethandler= async ()=>{
+    if(typeof window !=="undefined" && typeof window.ethereum !== "undefined"){
+        try {
+         window.ethereum.request({method: "eth_requestAccounts"})
+         setAlertMessage({text: "Successfully connected to a wallet", title: "Success"});
+         setPopupTrigger(true);
+        }
+        catch(err){
+             setAlertMessage({text: err.message, title: "Error"})
+             setPopupTrigger(true)
+        }
+     }
+    else{
+         setAlertMessage({text: "Please install Metamask", title: "Error"})
+         setPopupTrigger(true)
+    }
+
+ }
 
   const init = async () => {
     let provider = window.ethereum;
@@ -132,7 +150,7 @@ export default function Home() {
       provider
         .request({ method: "eth_requestAccounts" })
         .then((accounts) => {
-          selectedAccount = accounts[0];
+          setWalletAddress(accounts[0]);
         })
         .catch((err) => {
           setAlertMessage({ text: err.message, title: "Error" });
@@ -141,9 +159,9 @@ export default function Home() {
         });
 
       window.ethereum.on("accountsChanged", function (accounts) {
-        selectedAccount = accounts[0];
+        setWalletAddress(accounts[0]);
         setAlertMessage({
-          text: `Selected account changed to ${selectedAccount}`,
+          text: `Selected account changed to ${accounts[0]}`,
           title: "Success",
         });
         setPopupTrigger(true);
@@ -169,7 +187,6 @@ export default function Home() {
     }
 
     setDaoFactoryContract(daoFactoryContract);
-    setSelectedAccount(selectedAccount);
   };
   return (
     <div>
@@ -183,12 +200,12 @@ export default function Home() {
           crossOrigin="anonymous"
         ></link>
       </Head>
-      <Header logged={selectedAccount} />
+      <Header logged={walletAddress !== undefined && walletAddress !== null} WalletConnect={connectWallethandler}/>
       <div className="page">
         {!loaded ? (
           <Spinner></Spinner>
         ) : (
-          <SimpleGrid  columns={1} spacing="40px">
+          <SimpleGrid  columns={2} spacing="40px">
             {all_daos.map((dao, index) => {
               return (
                 <Card

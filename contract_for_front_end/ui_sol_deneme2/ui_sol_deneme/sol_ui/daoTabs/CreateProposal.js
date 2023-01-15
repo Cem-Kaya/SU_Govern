@@ -8,8 +8,8 @@ const CreateProposal = ({onCreateProposal}) => {
   return (
     <>
     <div className='col-2'></div>
-    <div className='col-8 border border-light text-white p-5'>
-        <h2 className='title text-white'><u>CREATE NEW PROPOSAL</u></h2>
+    <div className='col-8 border border-dark text-black p-5'>
+        <h2 className='title text-black'><u>CREATE NEW PROPOSAL</u></h2>
         <form>
             <label>Proposal Title: </label>
             <br/>

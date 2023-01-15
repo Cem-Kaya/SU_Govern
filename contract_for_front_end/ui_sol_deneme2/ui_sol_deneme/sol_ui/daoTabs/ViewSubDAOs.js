@@ -67,12 +67,12 @@ const ViewSubDAOs = ({
         <div className="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-6 my-2">
           {parentDAO["address"] === "0x0000000000000000000000000000000000000000" ? 
           (
-            <label className="text-light my-2">There is no parent DAO</label>
+            <label className="text-dark my-2">There is no parent DAO</label>
           ) : 
           (
             <div className="col-xl-8 col-lg-8 col-md-10 col-sm-12 col-xs-12 my-2">
               <div className="mx-2">
-                <label className="text-white">PARENT DAO</label>
+                <label className="text-dark">PARENT DAO</label>
                 <a
                   href={`/dao?address=${parentDAO["address"]}`}
                   className="container"
@@ -99,10 +99,10 @@ const ViewSubDAOs = ({
         </div>
         <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6 my-2">
           {subDAOs.length === 0 ? (
-            <label className="text-light">There is no sub DAO</label>
+            <label className="text-dark">There is no sub DAO</label>
           ) : (
             <div className="row mx-2">
-              <label className="text-white">SUB DAOs</label>
+              <label className="text-dark">SUB DAOs</label>
               {subDAOs.map((dao, index) => (
                 <div
                   key={index}

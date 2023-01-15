@@ -3,6 +3,16 @@ import PieChart from '../components/PieChart'
 import BarChart from '../components/BarChart'
 import { useState } from 'react'
 import Spinner from '../components/Spinner'
+import styled from "styled-components"
+
+const TextBoxProposal = styled.div`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    font-size: 1.0em;
+`;
 
 const Proposals = ({onGetAllProposals}) => {
     const [all_proposals, setall_proposals]=useState([])
@@ -28,29 +38,27 @@ const Proposals = ({onGetAllProposals}) => {
     all_proposals.length===0 ?
     <div className='container'>
         <div className='row mt-5'>
-            <div className='col-12'>
-                <label className='text-light'>There is no proposal</label>
+            <div className='col-12 text-center'>
+                <label className='text-dark'>There is no proposal</label>
             </div>
         </div>
     </div>
     :
     all_proposals.map((element, index) => (
-        <div key={index} className='container border border-white text-white p-5 mt-5'>
+        <div key={index} className='container border border-black text-black p-5 mt-5'>
             <div className='row'>  
                 <div className='col-12'>
                     <label className='h4'>{element[index][0]}</label><br/><br/>
                 </div>
             </div>
             <div className='row'>  
-                <div className='col-12'>
-                    <label>{element[index][6]}</label><br/><br/>
-                </div>
-                <div className='col-12'>
-                    <label>{element[index][4].charAt(0).toUpperCase() + element[index][4].slice(1)} proposal</label><br/><br/>
+                <div className='col-9'>
+                    <TextBoxProposal>{element[index][6]}</TextBoxProposal><br/><br/>
                 </div>
             </div>
             <div className='row'>
-                <div className='col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12'>
+                <div className='col-xl-4 col-lg-6 col-md-12 col-sm-12 col-xs-12'>
+                    <label>{element[index][4].charAt(0).toUpperCase() + element[index][4].slice(1)} proposal</label><br/><br/>
                     <p>Voting Power: {element[index][3]}</p><br/>
                     <p>Options:</p><br/>
                     {

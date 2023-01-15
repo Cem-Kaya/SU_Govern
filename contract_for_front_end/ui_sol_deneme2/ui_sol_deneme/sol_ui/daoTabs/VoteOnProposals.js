@@ -84,17 +84,17 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnNormalProposals, onVoteOnWe
             <div className='container'>
                 <div className='row mt-5'>
                     <div className='col-xl-4 col-lg-6 col-md-6 col-sm-12 col-xs-12'>
-                        <label className='text-light'>There is no proposal</label>
+                        <label className='text-black'>There is no proposal</label>
                     </div>
                 </div>
             </div>
             :
             [0,1,2].map((i) => (
-            <div key={i} className='col-xl-4 col-lg-6 col-md-6 col-sm-12 col-xs-12 text-white'>
+            <div key={i} className='col-xl-4 col-lg-6 col-md-6 col-sm-12 col-xs-12 text-black'>
                 {
                     all_props.map((element, index) => (
                         index % 3 === i ?            
-                            <div key={index} className='card bg-black border border-white text-white p-5 my-2'>
+                            <div key={index} className='card bg-white border border-black text-black p-5 my-2'>
                                 <TextBoxProposal>{element[index][0]}</TextBoxProposal><br/>
                                 <TextBoxDescription>{element[index][6]}</TextBoxDescription><br/>
                                 <label className='h6' style={{fontStyle:"italic"}}>Voting Power: {element[index][3]}</label><br/>
@@ -109,7 +109,7 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnNormalProposals, onVoteOnWe
                                                     <div className="input-group-append">
                                                         <button type="button" className='btn btn-danger rounded-0' disabled={element[index][5] === true || currAmountOfVotes[index][indx2] === 0} onClick={() => {let selCopy = [...currAmountOfVotes]; selCopy[index][indx2] = selCopy[index][indx2] - 1; setcurrAmountOfVotes(selCopy)}}>-</button>
                                                     </div>
-                                                    <input type="number" disabled={element[index][5] === true} className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={currAmountOfVotes[index][indx2]}/>
+                                                    <input type="number" disabled={element[index][5] === true} className='text-center' style={{width:"50px", color:"white", backgroundColor:"black"}} id="html" name="fav_language" disabled={true} value={currAmountOfVotes[index][indx2]}/>
                                                     <div className="input-group-append">
                                                         <button type="button" className='btn btn-primary rounded-0' disabled={element[index][5] === true || getTotalCount(currAmountOfVotes[index]) == element[index][3]} onClick={() => {let selCopy = [...currAmountOfVotes]; selCopy[index][indx2] = selCopy[index][indx2] + 1; setcurrAmountOfVotes(selCopy)}}>+</button><br/>
                                                     </div>
@@ -130,7 +130,7 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnNormalProposals, onVoteOnWe
                                             <div className="input-group-append">
                                                 <button type="button" className='btn btn-danger rounded-0' disabled={element[index][5] === true || weights[index] === 0} onClick={() => {let selCopy = [...weights]; selCopy[index] = selCopy[index] - 1; setWeights(selCopy)}}>-</button>
                                             </div>
-                                            <input type="number" disabled={element[index][5] === true} className='text-center' style={{width:"50px", color:"black", backgroundColor:"white"}} id="html" name="fav_language" disabled={true} value={weights[index]}/>
+                                            <input type="number" disabled={element[index][5] === true} className='text-center' style={{width:"50px", color:"white", backgroundColor:"black"}} id="html" name="fav_language" disabled={true} value={weights[index]}/>
                                             <div className="input-group-append">
                                                 <button type="button" className='btn btn-primary rounded-0' disabled={element[index][5] === true || weights[index] == amountOfVoterTokens} onClick={() => {let selCopy = [...weights]; selCopy[index] = selCopy[index] + 1; setWeights(selCopy)}}>+</button><br/>
                                             </div>

@@ -21,26 +21,28 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
     !loaded?
       <Spinner></Spinner>
       :
-      <>
-          <span className="title text-white" id="inputGroup-sizing-default">Withdraw YK Tokens</span>
-          <label className='text-white'>Withdrawable Amount: {ykShares}</label>
+      <div className='justify-content-center'>
+          <span className="title text-black" id="inputGroup-sizing-default">Withdraw YK Tokens</span>
+          <br/><br/>
+          <label className='text-black'>Withdrawable Amount: {ykShares}</label>
           <br/><br/>
           <div className="input-group mb-3">
-            <label className='text-white'>Number of Tokens: </label>
+            <label className='text-black'>Number of Tokens: </label>
             <input type="number" onChange={(e) => {info.current = {...info.current, amount1: e.target.value}}}/>
             <button disabled={ykShares === "0"} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawYKTokens(parseInt(info.current["amount1"]))}}>Withdraw Tokens</button>
           </div>
           <br/><br/>
 
-          <span className="title text-white" id="inputGroup-sizing-default">Withdraw Voter Tokens</span>
-          <label className='text-white'>Withdrawable Amount: {voterShares}</label>
+          <span className="title text-black mt-5" id="inputGroup-sizing-default">Withdraw Voter Tokens</span>
+          <br/><br/>
+          <label className='text-black'>Withdrawable Amount: {voterShares}</label>
           <br/><br/>
           <div className="input-group mb-3">
-            <label className='text-white'>Number of Tokens: </label>
+            <label className='text-black'>Number of Tokens: </label>
             <input type="number" onChange={(e) => {info.current = {...info.current, amount2: e.target.value}}}/>
             <button disabled={voterShares === "0"} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawVoterTokens(parseInt(info.current["amount2"]))}}>Withdraw Tokens</button>
           </div>
-      </>
+      </div>
   )
 }
 

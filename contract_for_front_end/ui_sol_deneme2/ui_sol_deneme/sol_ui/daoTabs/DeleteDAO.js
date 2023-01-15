@@ -6,7 +6,7 @@ const DeleteDAO = ({onDeleteDAO}) => {
         <div className='col-12'>
             <br/><br/>
             <div className='d-flex justify-content-center'>
-                <button className='btn btn-outline-light' onClick={() => {onDeleteDAO()}}>
+                <button className='btn btn-dark text-light' onClick={() => {onDeleteDAO()}}>
                     DeleteDAO
                 </button>
             </div>

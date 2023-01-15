@@ -22,8 +22,8 @@ const Delegate = ({
     amountYK: 0,
   });
   return (
-    <div className="text-white">
-      <span className="title text-white" id="inputGroup-sizing-default">
+    <div className="text-black">
+      <span className="title text-black" id="inputGroup-sizing-default">
         Delegate YK Tokens
       </span>
       <br />
@@ -57,7 +57,7 @@ const Delegate = ({
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
             />
-            <div id="emailHelp" className="form-text text-white">
+            <div id="emailHelp" className="form-text text-black">
               Delegate YK Tokens From This Address
             </div>
           </div>
@@ -89,7 +89,7 @@ const Delegate = ({
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
               />
-              <div id="emailHelp" className="form-text text-white">
+              <div id="emailHelp" className="form-text text-black">
                 Delegate This Number of Tokens From This Address
               </div>
             </div>
@@ -115,8 +115,9 @@ const Delegate = ({
       </button>
       <br />
       <br />
-
-      <span className="title text-white" id="inputGroup-sizing-default">
+      <br />
+      
+      <span className="title text-black" id="inputGroup-sizing-default">
         Delegate Voter Tokens
       </span>
       <br />
@@ -153,7 +154,7 @@ const Delegate = ({
               id="exampleInputEmail2"
               aria-describedby="emailHelp"
             />
-            <div id="emailHelp" className="form-text text-white">
+            <div id="emailHelp" className="form-text text-black">
               Delegate Voter Tokens From This Address
             </div>
           </div>
@@ -188,7 +189,7 @@ const Delegate = ({
                 id="exampleInputEmail2"
                 aria-describedby="emailHelp"
               />
-              <div id="emailHelp" className="form-text text-white">
+              <div id="emailHelp" className="form-text text-black">
                 Delegate This Number of Tokens From This Address
               </div>
             </div>

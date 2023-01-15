@@ -7,7 +7,7 @@ function BarChart({ chartData }) {
     plugins: {
       legend: {
         labels: {
-          color: "white",
+          color: "black",
           font: {
             size: 14
           }
@@ -17,7 +17,7 @@ function BarChart({ chartData }) {
     scales: {
       y: {
         ticks: {
-          color: "white",
+          color: "black",
           font: {
             size: 12,
           },
@@ -28,7 +28,7 @@ function BarChart({ chartData }) {
       },
       x: {
         ticks: {
-          color: "white",
+          color: "black",
           font: {
             size: 12
           },

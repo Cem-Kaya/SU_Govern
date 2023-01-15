@@ -19,13 +19,14 @@ const CheckMyTokens = ({ onCheckYKBalance, onCheckVoterBalance }) => {
   return !loaded ? (
     <Spinner></Spinner>
   ) : (
-    <div className="container m-3">
-      <label className="text-white">
+    <div className="container m-3 text-center">
+      <br/>
+      <label className="text-black">
         Voter Balance: {voterBalance} Token
       </label>
       <br />
       <br />
-      <label className="text-white">
+      <label className="text-black">
         YK Balance: {ykBalance} Token
       </label>
     </div>

@@ -29,7 +29,7 @@ export default function Dao(){
     const [initialized, setInitialized] = useState(false);
     const [transactionInProgress, setTransactionInProgress] = useState(false);
     const [contracts, setContracts] = useState({daoContract: undefined, voterTokenContract: undefined, ykTokenContract: undefined, daoFactoryContract: undefined});
-    const [selectedAccount, setSelectedAccount] = useState("")
+    const [walletAddress, setWalletAddress] = useState(undefined)
     const [alertMessage,setAlertMessage] = useState({text: "", title: ""})
     const [daoInfo, setDaoInfo] = useState({name: "", description: "", total_voter_tokens: 0, total_yk_tokens: 0, total_proposals: 0, total_subdaos: 0})
     const [popupTrigger, setPopupTrigger] = useState(false)
@@ -70,13 +70,12 @@ export default function Dao(){
 
     const init = async () => {
         let provider = window.ethereum;
-        let selectedAccount;
         
         if (typeof provider !== 'undefined') {
             provider
                 .request({ method: 'eth_requestAccounts' })
                 .then((accounts) => {
-                    selectedAccount = accounts[0];
+                    setWalletAddress(accounts[0]);
                 })
                 .catch((err) => {
                     setAlertMessage({text: err.message, title: "Error"});
@@ -85,8 +84,8 @@ export default function Dao(){
                 });
     
             window.ethereum.on('accountsChanged', function (accounts) {
-                selectedAccount = accounts[0];
-                setAlertMessage({text: `Selected account changed to ${selectedAccount}`, title: "Success"});
+                setWalletAddress(accounts[0]); //undefined if disconnected
+                setAlertMessage({text: `Selected account changed to ${accounts[0]}`, title: "Success"});
                 setPopupTrigger(true)
             });
         }
@@ -180,7 +179,6 @@ export default function Dao(){
         }
 
         setContracts({daoContract: daoContract, daoFactoryContract: daoFactoryContract, voterTokenContract: voterTokenContract, ykTokenContract: ykTokenContract});
-        setSelectedAccount(selectedAccount);    
     };
 
     async function getGasEstimation(contract, funcName, parameters) { //probably not useful
@@ -212,7 +210,7 @@ export default function Dao(){
         const gasLimit = await web3.eth.estimateGas({
             to: contractAddress,  // The address of the contract that contains the function
             data: encodedABI,
-            from: selectedAccount,  // The address of the account you want to use to send the transaction
+            from: walletAddress,  // The address of the account you want to use to send the transaction
           }, function(error, gasAmount) {
             if (error) {
               console.error(error);
@@ -294,7 +292,7 @@ export default function Dao(){
         
         await getGasLimit(contracts.daoContract, "createProposal", [String(name), String(description), vote, initial_votes, parseInt(power), parseInt(type)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.createProposal(String(name), String(description),vote, initial_votes, parseInt(power), parseInt(type)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully created a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        await contracts.daoContract.methods.createProposal(String(name), String(description),vote, initial_votes, parseInt(power), parseInt(type)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully created a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return 0;
     }    
 
@@ -305,7 +303,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "delete_this_dao", []).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.delete_this_dao().send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully deleted the DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        await contracts.daoContract.methods.delete_this_dao().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully deleted the DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return 0;
     }
 
@@ -323,7 +321,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "vote_power", [parseInt(id), vote, vote_power]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.vote_power(parseInt(id), vote, vote_power).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.vote_power(parseInt(id), vote, vote_power).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         
         return 0;
     }
@@ -344,7 +342,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "vote_power_weighted", [parseInt(id), vote, vote_power, weight]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.vote_power_weighted(parseInt(id), vote, vote_power, weight).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.vote_power_weighted(parseInt(id), vote, vote_power, weight).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         
         return 0;
     }
@@ -369,7 +367,7 @@ export default function Dao(){
             await contracts.daoContract.methods.getProposalVoteNumbers(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
             await contracts.daoContract.methods.getProposalPower(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
             await contracts.daoContract.methods.getProposalType(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
-            await contracts.daoContract.methods.votes(String(selectedAccount), i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+            await contracts.daoContract.methods.votes(String(walletAddress), i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
             await contracts.daoContract.methods.getProposalDescription().call().then((result) => {proposals[i][i].push(result[i])}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         }
         
@@ -383,7 +381,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "send_voter_tokens_to_address_yk_directly", [String(address), parseInt(amount)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.send_voter_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.send_voter_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
     const sendYKTokens = async (address, amount) => {
@@ -393,7 +391,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "send_yk_tokens_to_address_yk_directly", [String(address), parseInt(amount)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.send_yk_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.send_yk_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
     const getVoterBalance = async () => {
@@ -401,7 +399,7 @@ export default function Dao(){
             await init();
         }
         let voterBalance
-        await contracts.voterTokenContract.methods.balanceOf(String(selectedAccount)).call().then((result) => {voterBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.voterTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {voterBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         voterBalance = voterBalance / Math.pow(10, 18)
         console.log(voterBalance)
         return voterBalance
@@ -412,7 +410,7 @@ export default function Dao(){
             await init();
         }
         let ykBalance
-        await contracts.ykTokenContract.methods.balanceOf(String(selectedAccount)).call().then((result) => {ykBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.ykTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {ykBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         ykBalance = ykBalance / Math.pow(10, 18)
         return ykBalance
     }
@@ -448,7 +446,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "withdraw_yk_tokens", [parseInt(amount)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.withdraw_yk_tokens(parseInt(amount)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.withdraw_yk_tokens(parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
     const withdrawVoterTokens = async (amount) => {
@@ -458,7 +456,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "withdraw_voter_tokens", [parseInt(amount)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.withdraw_voter_tokens(parseInt(amount)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.withdraw_voter_tokens(parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
     const getYKSharesToBeGiven = async () => {
@@ -466,7 +464,7 @@ export default function Dao(){
             await init();
         }
         let shares;
-        await contracts.daoContract.methods.yk_shares_to_be_given(String(selectedAccount)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.yk_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
     }
 
@@ -475,7 +473,7 @@ export default function Dao(){
             await init();
         }
         let shares
-        await contracts.daoContract.methods.voter_shares_to_be_given(String(selectedAccount)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.voter_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
     }
 
@@ -486,7 +484,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoFactoryContract, "createChildDAO", [String(address), String(name), String(description), String(ykTokenName), String(ykTokenSymbol), String(voterTokenName), String(voterTokenSymbol)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoFactoryContract.methods.createChildDAO(address, String(name), String(description), String(ykTokenName), String(ykTokenSymbol), String(voterTokenName), String(voterTokenSymbol)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully created child DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoFactoryContract.methods.createChildDAO(address, String(name), String(description), String(ykTokenName), String(ykTokenSymbol), String(voterTokenName), String(voterTokenSymbol)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully created child DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
     const delegateAllYK = async () => {
@@ -496,7 +494,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_delagation_multiple_getback_all_yk", []).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_delagation_multiple_getback_all_yk().send({from: selectedAccount, gas:gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all YK tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_delagation_multiple_getback_all_yk().send({from: walletAddress, gas:gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all YK tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const delegateAllVoter = async () => {
         if (!initialized) {
@@ -505,7 +503,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_delagation_multiple_getback_all_voter", []).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_delagation_multiple_getback_all_voter().send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all voter tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_delagation_multiple_getback_all_voter().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all voter tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const delegateAllFromAddressYK = async (address_wallet) => {
         if (!initialized) {
@@ -514,7 +512,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_delegation_single_getback_all_yk", [String(address_wallet)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methodsdao_delegation_single_getback_all_yk(String(address_wallet)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methodsdao_delegation_single_getback_all_yk(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const delegateAllFromAddressVoter = async (address_wallet) => {
         if (!initialized) {
@@ -523,7 +521,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_delegation_single_getback_all_voter", [String(address_wallet)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_delegation_single_getback_all_voter(String(address_wallet)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_delegation_single_getback_all_voter(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const delegateSomeFromAddressYK = async (address_wallet, amount_token) => {
         if (!initialized) {
@@ -532,7 +530,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_delegation_single_getback_amount_yk", [String(address_wallet), parseInt(amount_token)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_delegation_single_getback_amount_yk(String(address_wallet), parseInt(amount_token)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated some YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_delegation_single_getback_amount_yk(String(address_wallet), parseInt(amount_token)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated some YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const delegateSomeFromAddressVoter = async (address_wallet, amount_token) => {
         if (!initialized) {
@@ -541,7 +539,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_delegation_single_getback_amount_voter", [String(address_wallet), parseInt(amount_token)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_delegation_single_getback_amount_voter(String(address_wallet), parseInt(amount_token)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated some voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_delegation_single_getback_amount_voter(String(address_wallet), parseInt(amount_token)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated some voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const clawBackYKFromAll = async () => {
         if (!initialized) {
@@ -550,7 +548,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_clawback_all_yk", []).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_clawback_all_yk().send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back all YK tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_clawback_all_yk().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back all YK tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const clawBackVoterFromAll = async () => {
         if (!initialized) {
@@ -559,7 +557,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_clawback_all_voter", []).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_clawback_all_voter().send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back all voter tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_clawback_all_voter().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back all voter tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const clawBackYKFromSingleAddress = async (address_wallet) => {
         if (!initialized) {
@@ -568,7 +566,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_clawback_single_yk", [String(address_wallet)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_clawback_single_yk(String(address_wallet)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_clawback_single_yk(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
     const clawBackVoterFromSingleAddress = async (address_wallet) => {
         if (!initialized) {
@@ -577,7 +575,7 @@ export default function Dao(){
         let gasLimit;
         await getGasLimit(contracts.daoContract, "dao_clawback_single_voter", [String(address_wallet)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
-        await contracts.daoContract.methods.dao_clawback_single_voter(String(address_wallet)).send({from: selectedAccount, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.dao_clawback_single_voter(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
     const getHTMLBody = () => {
@@ -641,7 +639,7 @@ export default function Dao(){
                 <Spinner></Spinner>
                 :
                 <div className="row mx-0">
-                        <Header WalletConnect={connectWallethandler} logged={true}/>
+                        <Header WalletConnect={connectWallethandler} logged={walletAddress !== undefined && walletAddress !== null}/>
                     <div className='page dao-page'>
                     <Sidebar setSelectedNavItem={setSelectedNavItem}/>
                         <div className="container" style={{padding:"30px"}}>

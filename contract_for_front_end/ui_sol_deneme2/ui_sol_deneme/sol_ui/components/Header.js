@@ -30,7 +30,7 @@ function Header({WalletConnect,logged}) {
           <div className="Header-link Wallet">Connected</div> 
           // TODO: Disconnect ekle ve ikonlastir
         ) : (
-          <div className="Wallet" onClick={WalletConnect}>Wallet Connect</div>
+          <div className="Wallet" style={{cursor:"pointer"}} onClick={WalletConnect}>Wallet Connect</div>
         )}
       </div>
 

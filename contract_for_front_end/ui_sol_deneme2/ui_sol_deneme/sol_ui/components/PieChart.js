@@ -7,9 +7,9 @@ function PieChart({ chartData }) {
     plugins: {
       legend: {
         labels: {
-          color: "white",
+          color: "black",
           font: {
-            size: 16
+            size: 12
           }
         }
       }
