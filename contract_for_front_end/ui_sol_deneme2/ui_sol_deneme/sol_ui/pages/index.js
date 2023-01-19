@@ -12,7 +12,7 @@ export default function Home() {
   const [popupTrigger, setPopupTrigger] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [daoFactoryContract, setDaoFactoryContract] = useState(undefined);
-  const [walletAddress, setWalletAddress] = useState("");
+  const [walletAddress, setWalletAddress] = useState(undefined);
   const [all_daos, setall_daos] = useState([]);
   const [topDAOAddress, setTopDAOAddress] = useState("");
   const dataFactory = require("../blockchain1/build/contracts/DAOFactory.json");
@@ -129,8 +129,6 @@ export default function Home() {
     if(typeof window !=="undefined" && typeof window.ethereum !== "undefined"){
         try {
          window.ethereum.request({method: "eth_requestAccounts"})
-         setAlertMessage({text: "Successfully connected to a wallet", title: "Success"});
-         setPopupTrigger(true);
         }
         catch(err){
              setAlertMessage({text: err.message, title: "Error"})
@@ -155,15 +153,19 @@ export default function Home() {
         .catch((err) => {
           setAlertMessage({ text: err.message, title: "Error" });
           setPopupTrigger(true);
-          return;
         });
 
       window.ethereum.on("accountsChanged", function (accounts) {
         setWalletAddress(accounts[0]);
-        setAlertMessage({
-          text: `Selected account changed to ${accounts[0]}`,
-          title: "Success",
-        });
+        if(accounts[0]===undefined || accounts[0]===null){
+          setAlertMessage({text: "Disconnected from the wallet", title: "Warning"});
+        }
+        else{
+          setAlertMessage({
+            text: `Selected account changed to ${accounts[0]}`,
+            title: "Success",
+          });
+        }
         setPopupTrigger(true);
       });
     }
@@ -201,7 +203,7 @@ export default function Home() {
         ></link>
       </Head>
       <Header logged={walletAddress !== undefined && walletAddress !== null} WalletConnect={connectWallethandler}/>
-      <div className="page">
+      <div className="index-page">
         {!loaded ? (
           <Spinner></Spinner>
         ) : (

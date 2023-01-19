@@ -16,6 +16,11 @@ a {
 }
 
 .page{
+  width: 90%;
+  margin: auto;
+}
+
+.index-page{
   width: 80%;
   margin: auto;
 }
@@ -26,4 +31,5 @@ a {
 }
 .sidebar{
   width: 20vw;
+  min-width: 14vw;
 }

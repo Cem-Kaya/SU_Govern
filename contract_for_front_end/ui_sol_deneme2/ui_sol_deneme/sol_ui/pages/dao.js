@@ -53,8 +53,6 @@ export default function Dao(){
        if(typeof window !=="undefined" && typeof window.ethereum !== "undefined"){
            try {
             window.ethereum.request({method: "eth_requestAccounts"})
-            setAlertMessage({text: "Successfully connected to a wallet", title: "Success"});
-            setPopupTrigger(true);
            }
            catch(err){
                 setAlertMessage({text: err.message, title: "Error"})
@@ -78,14 +76,22 @@ export default function Dao(){
                     setWalletAddress(accounts[0]);
                 })
                 .catch((err) => {
-                    setAlertMessage({text: err.message, title: "Error"});
-                    setPopupTrigger(true);
+                    // setAlertMessage({text: err.message, title: "Error"});
+                    // setPopupTrigger(true);
                     return;
                 });
     
             window.ethereum.on('accountsChanged', function (accounts) {
                 setWalletAddress(accounts[0]); //undefined if disconnected
-                setAlertMessage({text: `Selected account changed to ${accounts[0]}`, title: "Success"});
+                if(accounts[0]===undefined || accounts[0]===null){
+                    setAlertMessage({text: "Disconnected from the wallet", title: "Warning"});
+                }
+                else{
+                  setAlertMessage({
+                    text: `Selected account changed to ${accounts[0]}`,
+                    title: "Success",
+                  });
+                }
                 setPopupTrigger(true)
             });
         }
@@ -399,9 +405,7 @@ export default function Dao(){
             await init();
         }
         let voterBalance
-        await contracts.voterTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {voterBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
-        voterBalance = voterBalance / Math.pow(10, 18)
-        console.log(voterBalance)
+        await contracts.voterTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {voterBalance = result / Math.pow(10, 18)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return voterBalance
     }
 
@@ -410,8 +414,7 @@ export default function Dao(){
             await init();
         }
         let ykBalance
-        await contracts.ykTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {ykBalance = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
-        ykBalance = ykBalance / Math.pow(10, 18)
+        await contracts.ykTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {ykBalance = result / Math.pow(10, 18)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return ykBalance
     }
 
@@ -464,7 +467,7 @@ export default function Dao(){
             await init();
         }
         let shares;
-        await contracts.daoContract.methods.yk_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.yk_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = result / Math.pow(10, 18)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
     }
 
@@ -473,7 +476,7 @@ export default function Dao(){
             await init();
         }
         let shares
-        await contracts.daoContract.methods.voter_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.voter_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = result / Math.pow(10, 18)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
     }
 
@@ -641,7 +644,7 @@ export default function Dao(){
                 <div className="row mx-0">
                         <Header WalletConnect={connectWallethandler} logged={walletAddress !== undefined && walletAddress !== null}/>
                     <div className='page dao-page'>
-                    <Sidebar setSelectedNavItem={setSelectedNavItem}/>
+                    <Sidebar setSelectedNavItem={setSelectedNavItem} selectedNavItem={selectedNavItem}/>
                         <div className="container" style={{padding:"30px"}}>
                                 <div className="row">
                                     <div className="col-xl-4 col-lg-3 col-md-2 col-sm-1 col-xs-1"></div>

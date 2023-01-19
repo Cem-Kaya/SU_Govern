@@ -49,7 +49,7 @@ const ClawBack = ({
           </div>
         </div>
       )}
-      
+      <br/>
       <button
         type="button"
         className="btn btn-primary"
@@ -102,6 +102,7 @@ const ClawBack = ({
           </div>
         </div>
       )}
+      <br/>
       <button
         type="button"
         className="btn btn-primary"

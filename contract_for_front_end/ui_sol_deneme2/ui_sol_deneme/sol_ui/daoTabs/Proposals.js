@@ -45,7 +45,7 @@ const Proposals = ({onGetAllProposals}) => {
     </div>
     :
     all_proposals.map((element, index) => (
-        <div key={index} className='container border border-black text-black p-5 mt-5'>
+        <div key={index} className='col-12 border border-black text-black p-5 mt-5'>
             <div className='row'>  
                 <div className='col-12'>
                     <label className='h4'>{element[index][0]}</label><br/><br/>
@@ -70,7 +70,7 @@ const Proposals = ({onGetAllProposals}) => {
                     ))
                     }
                 </div>
-                <div className='col-xl-2 col-lg-3 col-md-4 col-sm-8 col-xs-8'>
+                <div className='col-xl-3 col-lg-3 col-md-5 col-sm-8 col-xs-8'>
                     <PieChart chartData={{
                         labels: element[index][1],
                         datasets: [
@@ -90,7 +90,7 @@ const Proposals = ({onGetAllProposals}) => {
                         ],
                         }}></PieChart>
                 </div>
-                <div className='col-xl-4 col-lg-3 col-md-6 col-sm-12 col-xs-12'>
+                <div className='col-xl-5 col-lg-3 col-md-6 col-sm-12 col-xs-12'>
                     <BarChart chartData={{
                         labels: element[index][1],
                         datasets: [

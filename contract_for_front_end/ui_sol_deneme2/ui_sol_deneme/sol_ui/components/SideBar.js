@@ -1,7 +1,7 @@
 import { redirect } from "next/dist/server/api-utils";
 import React, { Component, useState } from "react";
 import Button from "./Button";
-function Sidebar({setSelectedNavItem}) {
+function Sidebar({setSelectedNavItem, selectedNavItem}) {
   return (
     <div className="sidebar">
       <ul className="nav flex-column my-2">
@@ -10,7 +10,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 0 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(0);
@@ -21,7 +21,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 1 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(1);
@@ -32,7 +32,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 2 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(2);
@@ -43,7 +43,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 3 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(3);
@@ -54,7 +54,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 4 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(4);
@@ -65,7 +65,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 5 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(5);
@@ -83,7 +83,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 6 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(6);
@@ -94,7 +94,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 7 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(7);
@@ -105,7 +105,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 8 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(8);
@@ -123,7 +123,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 9 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(9);
@@ -141,7 +141,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 10 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(10);
@@ -152,7 +152,7 @@ function Sidebar({setSelectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
-            className="nav-link"
+            className={selectedNavItem === 11 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {
               setSelectedNavItem(11);

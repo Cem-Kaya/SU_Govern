@@ -16,7 +16,11 @@ const SendYKToken = ({onSendTokens}) => {
             <input type="number" id="tokenBox" className="form-control" onChange={(e) => {info.current = {...info.current, amount: e.target.value}}}/>
         </div>
         <br/><br/><br/><br/>
-        <button type="button" className='btn btn-primary rounded-0' onClick={() => {onSendTokens(info.current["address"], parseInt(info.current["amount"]))}}>Send Tokens</button>
+        <div className='col-xl-4 col-lg-3 col-md-2 col-sm-1 col-xs-0'></div>
+        <div className='col-xl-4 col-lg-6 col-md-8 col-sm-10 col-xs-12'>
+            <button type="button" className='btn btn-primary rounded' onClick={() => {onSendTokens(info.current["address"], parseInt(info.current["amount"]))}}>Send Tokens</button>
+        </div>
+        <div className='col-xl-4 col-lg-3 col-md-2 col-sm-1 col-xs-0'></div>
     </>
     )
 }

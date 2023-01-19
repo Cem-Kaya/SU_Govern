@@ -29,7 +29,7 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
           <div className="input-group mb-3">
             <label className='text-black'>Number of Tokens: </label>
             <input type="number" onChange={(e) => {info.current = {...info.current, amount1: e.target.value}}}/>
-            <button disabled={ykShares === "0"} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawYKTokens(parseInt(info.current["amount1"]))}}>Withdraw Tokens</button>
+            <button disabled={ykShares === 0} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawYKTokens(parseInt(info.current["amount1"]))}}>Withdraw Tokens</button>
           </div>
           <br/><br/>
 
@@ -40,7 +40,7 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
           <div className="input-group mb-3">
             <label className='text-black'>Number of Tokens: </label>
             <input type="number" onChange={(e) => {info.current = {...info.current, amount2: e.target.value}}}/>
-            <button disabled={voterShares === "0"} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawVoterTokens(parseInt(info.current["amount2"]))}}>Withdraw Tokens</button>
+            <button disabled={voterShares === 0} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawVoterTokens(parseInt(info.current["amount2"]))}}>Withdraw Tokens</button>
           </div>
       </div>
   )

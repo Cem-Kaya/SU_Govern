@@ -35,7 +35,8 @@
     padding: 32px;
 }
 
-.popup-inner.close-btn{
+.popup-inner
+.close-btn{
     position: absolute;
     top: 16px;
     right: 16px;
