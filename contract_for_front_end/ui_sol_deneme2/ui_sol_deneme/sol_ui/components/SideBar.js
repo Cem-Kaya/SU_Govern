@@ -83,6 +83,17 @@ function Sidebar({setSelectedNavItem, selectedNavItem}) {
         </li>
         <li className="nav-item">
           <p
+            className={selectedNavItem === 12 ?  "nav-link text-secondary" : "nav-link"}
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSelectedNavItem(12);
+            }}
+          >
+            Transfer Tokens
+          </p>
+        </li>
+        <li className="nav-item">
+          <p
             className={selectedNavItem === 6 ?  "nav-link text-secondary" : "nav-link"}
             style={{ cursor: "pointer" }}
             onClick={() => {

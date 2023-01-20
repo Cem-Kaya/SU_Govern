@@ -22,6 +22,7 @@ import DeleteDAO from '../daoTabs/DeleteDAO'
 import Header from '../components/Header'
 import Sidebar from '../components/SideBar'
 import LockScreen from '../components/LockScreen'
+import TransferTokens from '../daoTabs/TransferTokens'
 
 export default function Dao(){
     const router = useRouter();
@@ -409,6 +410,26 @@ export default function Dao(){
         return voterBalance
     }
 
+    const transferVoterTokens = async (address, amount) => {
+        if (!initialized) {
+            await init();
+        }
+        let gasLimit; let zero = "0";
+        await getGasLimit(contracts.voterTokenContract, "transfer", [String(address), String(amount) + zero.repeat(18)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        setTransactionInProgress(true);
+        await contracts.voterTokenContract.methods.transfer(String(address), String(amount) + zero.repeat(18)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully transferred tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+    }
+
+    const transferYKTokens = async (address, amount) => {
+        if (!initialized) {
+            await init();
+        }
+        let gasLimit; let zero = "0";
+        await getGasLimit(contracts.ykTokenContract, "transfer", [String(address), String(amount) + zero.repeat(18)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
+        setTransactionInProgress(true);
+        await contracts.ykTokenContract.methods.transfer(String(address), String(amount) + zero.repeat(18)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully transferred tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+    }
+
     const getYKBalance = async () => {
         if (!initialized) {
             await init();
@@ -625,6 +646,9 @@ export default function Dao(){
                 :
                 selectedNavItem === 11 ?
                     <ViewSubDAOs onGetDAODescription={getDaoDescription} onGetDAOName={getDaoName} onGetSubDAOs={getSubDAOs} onGetParentDAO={getParentDAO}></ViewSubDAOs>
+                :
+                selectedNavItem === 12 ?
+                    <TransferTokens onTransferVoterTokens={transferVoterTokens} onTransferYKTokens={transferYKTokens} onGetVoterBalance={getVoterBalance} onGetYKBalance={getYKBalance}></TransferTokens>
                 :
                 <></>
     }

@@ -83,7 +83,7 @@ const VoteOnProposals = ({onGetAllProposals, onVoteOnNormalProposals, onVoteOnWe
             all_props.length===0 ?
             <div className='container'>
                 <div className='row mt-5'>
-                    <div className='col-xl-4 col-lg-6 col-md-6 col-sm-12 col-xs-12'>
+                    <div className='text-center'>
                         <label className='text-black'>There is no proposal</label>
                     </div>
                 </div>

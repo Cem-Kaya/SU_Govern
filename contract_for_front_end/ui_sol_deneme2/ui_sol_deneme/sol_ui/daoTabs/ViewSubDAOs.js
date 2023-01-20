@@ -77,7 +77,7 @@ const ViewSubDAOs = ({
                   href={`/dao?address=${parentDAO["address"]}`}
                   className="container"
                 >
-                  <div className="card text-white bg-dark my-2">
+                  <div className="card text-black bg-light my-2">
                     <div className="card-header">
                       <div className="container p-3">
                         <img
@@ -88,7 +88,7 @@ const ViewSubDAOs = ({
                       </div>
                     </div>
                     <div className="card-body">
-                      <h5 className="card-title text-white">{parentDAO["name"]}</h5>
+                      <h5 className="card-title text-black">{parentDAO["name"]}</h5>
                       <p className="card-text">{parentDAO["description"]}</p>
                     </div>
                   </div>
@@ -117,7 +117,7 @@ const ViewSubDAOs = ({
                     href={`/dao?address=${dao["address"]}`}
                     className="container"
                   >
-                    <div className="card text-white bg-dark">
+                    <div className="card text-black bg-light">
                       <div className="card-header">
                         <div className="container p-3">
                           <img
@@ -128,7 +128,7 @@ const ViewSubDAOs = ({
                         </div>
                       </div>
                       <div className="card-body">
-                        <h5 className="card-title text-white">{dao["name"]}</h5>
+                        <h5 className="card-title text-black">{dao["name"]}</h5>
                         <p className="card-text">{dao["description"]}</p>
                       </div>
                     </div>

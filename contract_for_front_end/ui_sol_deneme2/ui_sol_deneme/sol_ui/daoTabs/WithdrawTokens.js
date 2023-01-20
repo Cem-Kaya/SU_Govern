@@ -22,6 +22,9 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
       <Spinner></Spinner>
       :
       <div className='justify-content-center'>
+        <br/><br/>
+      <div className='row'>
+        <div className='col-6'>
           <span className="title text-black" id="inputGroup-sizing-default">Withdraw YK Tokens</span>
           <br/><br/>
           <label className='text-black'>Withdrawable Amount: {ykShares}</label>
@@ -31,8 +34,8 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
             <input type="number" onChange={(e) => {info.current = {...info.current, amount1: e.target.value}}}/>
             <button disabled={ykShares === 0} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawYKTokens(parseInt(info.current["amount1"]))}}>Withdraw Tokens</button>
           </div>
-          <br/><br/>
-
+          </div>
+        <div className='col-6'>
           <span className="title text-black mt-5" id="inputGroup-sizing-default">Withdraw Voter Tokens</span>
           <br/><br/>
           <label className='text-black'>Withdrawable Amount: {voterShares}</label>
@@ -42,6 +45,9 @@ const WithdrawTokens = ({onVoterSharesToBeGiven, onYKSharesToBeGiven, onWithdraw
             <input type="number" onChange={(e) => {info.current = {...info.current, amount2: e.target.value}}}/>
             <button disabled={voterShares === 0} type="button" className='btn btn-primary rounded-0' onClick={() => {onWithdrawVoterTokens(parseInt(info.current["amount2"]))}}>Withdraw Tokens</button>
           </div>
+          </div>
+          </div>
+          <br/><br/>
       </div>
   )
 }
