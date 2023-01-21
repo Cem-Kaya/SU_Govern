@@ -153,7 +153,7 @@ contract MyDAO {
         //yk_token.transfer(yk_candidate, (_amount * 10 ** 18));
     } 
 
-    function send_yk_tokens_to_address_yk_directly(address yk_candidate, uint _amount) external {
+    function send_yk_tokens_to_address_yk_directly(address yk_candidate, uint _amount) public {
         require(has_yk_priviliges(msg.sender) , 'Not a YK');
         //yk_shares[msg.sender] -= (_amount * 10 ** 18);
         //totalShares -= (_amount * 10 ** 18);
@@ -177,7 +177,7 @@ contract MyDAO {
         //voter_token.transfer(voter_candidate, (_amount * 10 ** 18));
     }                   
 
-    function send_voter_tokens_to_address_yk_directly(address voter_candidate, uint _amount) external {
+    function send_voter_tokens_to_address_yk_directly(address voter_candidate, uint _amount) public {
         require(has_yk_priviliges(msg.sender) , 'Not a YK');
         //yk_shares[msg.sender] -= (_amount * 10 ** 18);
         //totalShares -= (_amount * 10 ** 18);
@@ -473,6 +473,25 @@ contract MyDAO {
         factory.delete_DAO(this, msg.sender);
         yk_token.clawback_all( );
     }
+   
+    
+    function add_voters_from_string_array(address[] memory voters) public {
+        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
+        for(uint i = 0; i < voters.length; i++){
+            send_voter_tokens_to_address_yk_directly(voters[i], 1);
+        }
+    }
+
+    function add_yks_from_string_array(address[] memory yks) public {
+        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
+        for(uint i = 0; i < yks.length; i++){
+            send_yk_tokens_to_address_yk_directly(yks[i], 1);
+        }
+    }
+
+
+
+
 }                   
 
 
