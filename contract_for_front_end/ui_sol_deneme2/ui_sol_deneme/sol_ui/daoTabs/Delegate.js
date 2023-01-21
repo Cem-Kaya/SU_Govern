@@ -76,7 +76,7 @@ const Delegate = ({
           </div>
           {!delegateAllFromAddressYK && (
             <div className="mb-3">
-              <label for="exampleInputEmail1" className="form-label">
+              <label for="exampleInputEmail17" className="form-label">
                 Number of Tokens to Delegate
               </label>
               <input
@@ -86,10 +86,10 @@ const Delegate = ({
                 }}
                 type="number"
                 className="form-control"
-                id="exampleInputEmail1"
+                id="exampleInputEmail17"
                 aria-describedby="emailHelp"
               />
-              <div id="emailHelp" className="form-text text-black">
+              <div id="emailHelp12" className="form-text text-black">
                 Delegate This Number of Tokens From This Address
               </div>
             </div>
@@ -100,7 +100,7 @@ const Delegate = ({
       <button
         type="button"
         className="btn btn-primary"
-        onClick={() => {
+        onClick={() => {console.log()
           delegateAllYK
             ? onDelegateAllYK()
             : delegateAllFromAddressYK
@@ -126,32 +126,29 @@ const Delegate = ({
         <input
           className="form-check-input"
           type="checkbox"
-          id="flexSwitchCheckDefault2"
+          id="flexSwitchCheckDefault22"
           onClick={() => {
             setDelegateAllVoter(!delegateAllVoter);
           }}
         />
-        <label className="form-check-label" for="flexSwitchCheckDefault2">
+        <label className="form-check-label" for="flexSwitchCheckDefault22">
           Delegate From All Possible Addresses
         </label>
       </div>
       {!delegateAllVoter && (
         <>
           <div className="mb-3">
-            <label for="exampleInputEmail1" className="form-label">
+            <label for="exampleInputEmail1asad" className="form-label">
               Wallet address
             </label>
             <input
               disabled={delegateAllVoter}
               onChange={(e) => {
-                info.current = {
-                  ...info.current,
-                  addressVoter: e.target.value,
-                };
+                info.current = { ...info.current, addressVoter: e.target.value};
               }}
               type="email"
               className="form-control"
-              id="exampleInputEmail2"
+              id="exampleInputEmail1asad"
               aria-describedby="emailHelp"
             />
             <div id="emailHelp" className="form-text text-black">
@@ -162,7 +159,7 @@ const Delegate = ({
             <input
               className="form-check-input"
               type="checkbox"
-              id="flexSwitchCheckDefaultAmount2"
+              id="flexSwitchCheckDefaultAmount2asaa"
               onClick={() => {
                 setDelegateAllFromAddressVoter(!delegateAllFromAddressVoter);
               }}
@@ -173,20 +170,15 @@ const Delegate = ({
           </div>
           {!delegateAllFromAddressVoter && (
             <div className="mb-3">
-              <label for="exampleInputEmail1" className="form-label">
+              <label for="exampleInputEmail2xc" className="form-label">
                 Number of Tokens to Delegate
               </label>
               <input
                 disabled={delegateAllFromAddressVoter}
-                onChange={(e) => {
-                  info.current = {
-                    ...info.current,
-                    addressVoter: e.target.value,
-                  };
-                }}
+                onChange={(e) => { info.current = { ...info.current, amountVoter: e.target.value}; }}
                 type="email"
                 className="form-control"
-                id="exampleInputEmail2"
+                id="exampleInputEmail2xc"
                 aria-describedby="emailHelp"
               />
               <div id="emailHelp" className="form-text text-black">
@@ -201,7 +193,7 @@ const Delegate = ({
       <button
         type="button"
         className="btn btn-primary"
-        onClick={() => {
+        onClick={() => {console.log(info.current.addressVoter); console.log(info.current.amountVoter);
           delegateAllVoter
             ? onDelegateAllVoter()
             : delegateAllFromAddressVoter

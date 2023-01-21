@@ -41,3 +41,12 @@
     top: 16px;
     right: 16px;
 }
+
+.popup-message{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    font-size: 1.0em;
+}
