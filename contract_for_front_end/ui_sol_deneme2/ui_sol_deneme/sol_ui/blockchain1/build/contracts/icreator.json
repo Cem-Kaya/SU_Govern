@@ -50,7 +50,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: GPL-3.0\r\npragma solidity >=0.7.0 <0.9.0;\r\npragma experimental ABIEncoderV2;\r\n\r\ninterface icreator {\r\n    //create tokens, and transfer ownership to the factory\r\n    function createToken( string memory yk_token_name, string memory yk_token_symbol, string memory voter_token_name, string memory voter_token_symbo) external returns (address, address);\r\n\r\n}",
-  "sourcePath": "D:\\Projects\\DAOO\\SU_Govern\\contract_for_front_end\\ui_sol_deneme2\\ui_sol_deneme\\sol_ui\\blockchain1\\contracts\\icreator.sol",
+  "sourcePath": "D:\\Projects\\DAOOO_baturay\\SU_Govern\\contract_for_front_end\\ui_sol_deneme2\\ui_sol_deneme\\sol_ui\\blockchain1\\contracts\\icreator.sol",
   "ast": {
     "absolutePath": "project:/contracts/icreator.sol",
     "exportedSymbols": {
@@ -307,7 +307,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-12-26T20:03:16.841Z",
+  "updatedAt": "2023-01-21T16:41:07.464Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

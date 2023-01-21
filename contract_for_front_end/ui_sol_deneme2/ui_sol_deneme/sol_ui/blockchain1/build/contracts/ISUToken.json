@@ -464,7 +464,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.7;\r\n\r\nimport \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";\r\nimport \"@openzeppelin/contracts/access/Ownable.sol\";\r\n\r\ninterface ISUToken is IERC20{\r\n\r\n    //mapping (uint => mapping(address => bool)) public proposalid_to_address_cantusetoken;\r\n    //uint256 public proposal_num;\r\n    //address public myDAO;\r\n    //mapping (address => mapping(uint256 => bool)) public transferLock;\r\n    \r\n    function mint(address to, uint256 amount) external ;\r\n    function assignDAO(address in_dao) external ;\r\n    function transfer(address to, uint256 amount) external override returns (bool) ;\r\n    function transferDAO(address to, uint256 amount) external returns (bool) ;\r\n    function update_proposal_num(uint proposals) external ;\r\n    function update_active_voter_lock_on(uint proposal, address sender) external ;   \r\n    function update_active_voter_lock_off(uint proposal, address sender) external ; \r\n    function increaseAllowance(address spender, uint256 addedValue) external  returns (bool);\r\n    \r\n    function delegation_single_getback_amount(address from, address to, uint256 amount) external returns (bool);\r\n    function delegation_single_getback_all(address from, address to ) external  returns (bool);\r\n    function delagation_multiple_getback_all(address to) external returns (bool);\r\n    function clawback_single(address to) external returns (bool);\r\n    function clawback_all() external returns (bool);\r\n\r\n    function getDebtToken(address adr) external view returns (uint256);\r\n    function getMyToken(address adr) external view returns (uint256);\r\n\r\n    \r\n    //constructor(string memory name, string memory symbol, address owner) external  ;\r\n\r\n\r\n    //soyle oncelikle factory de tokenime dao adresim giriliyor, sonra ben yk olarak birine token gonderirsem bir sorun yok, ama normal \r\n    //bir sekilde transfer ile gonderirsem butun oyladigim proposallarda digerininkileri aliyorum, yani onun oy verdiklerine oy veremiyorum ve bu.\r\n    //sirf true olanlarda gecerli yani bos bir adresten transferlede duzeltilemiyor, sonrasinda oy veriyorum oy verirken bu kisininki\r\n    //oyle tutulmus mu diye  checkleniyor. sonrasinda direk ona gore geri donus aliyorum.\r\n\r\n\r\n    //function isContract(address addr) view private returns (bool isContract) {    return addr.code.length > 0; }\r\n\r\n}",
-  "sourcePath": "D:\\Projects\\DAOO\\SU_Govern\\contract_for_front_end\\ui_sol_deneme2\\ui_sol_deneme\\sol_ui\\blockchain1\\contracts\\itoken.sol",
+  "sourcePath": "D:\\Projects\\DAOOO_baturay\\SU_Govern\\contract_for_front_end\\ui_sol_deneme2\\ui_sol_deneme\\sol_ui\\blockchain1\\contracts\\itoken.sol",
   "ast": {
     "absolutePath": "project:/contracts/itoken.sol",
     "exportedSymbols": {
@@ -1913,7 +1913,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-12-26T20:03:16.843Z",
+  "updatedAt": "2023-01-21T16:41:07.467Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
