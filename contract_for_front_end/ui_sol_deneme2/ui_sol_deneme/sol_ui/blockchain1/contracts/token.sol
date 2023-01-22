@@ -85,13 +85,15 @@ contract SUToken is ISUToken, ERC20, Ownable {
         debt_tokens[from] -= amount;
         my_tokens[to] += amount;
         user_delegations_value[to][from] -= amount;
-        for ( uint i = 0; i < user_delegations[to].length; i++){
-            if(user_delegations[to][i] == from){
-                //user_delegations[to][i];
-                //string element = myArray[index];
-                user_delegations[to][i] = user_delegations[to][user_delegations[to].length - 1];
-                user_delegations[to].pop();
-                break;
+        if(user_delegations_value[to][from] == 0){
+            for ( uint i = 0; i < user_delegations[to].length; i++){
+                if(user_delegations[to][i] == from){
+                    //user_delegations[to][i];
+                    //string element = myArray[index];
+                    user_delegations[to][i] = user_delegations[to][user_delegations[to].length - 1];
+                    user_delegations[to].pop();
+                    break;
+                }
             }
         }
         return true;

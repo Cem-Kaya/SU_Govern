@@ -7,16 +7,16 @@ import "./itoken.sol";
 import "./newFactory1.sol";
 
 
-
 contract MyDAO {
     string public dao_name;
     string public dao_description;
+    string[] public debug_array;
     uint256 dao_id;
     enum VotingOptions { Yes, No }
     enum Status     { Accepted, Rejected, Pending }
     
 
-    
+    address public test;
 
     struct Proposal {
         uint256 id;
@@ -473,21 +473,7 @@ contract MyDAO {
         factory.delete_DAO(this, msg.sender);
         yk_token.clawback_all( );
     }
-   
-    
-    function add_voters_from_string_array(address[] memory voters) public {
-        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
-        for(uint i = 0; i < voters.length; i++){
-            send_voter_tokens_to_address_yk_directly(voters[i], 1);
-        }
-    }
 
-    function add_yks_from_string_array(address[] memory yks) public {
-        require(has_yk_priviliges(msg.sender), "does not have yk priviliges") ;
-        for(uint i = 0; i < yks.length; i++){
-            send_yk_tokens_to_address_yk_directly(yks[i], 1);
-        }
-    }
 
 
 
