@@ -111,7 +111,7 @@ export default function Dao(){
         try{
             daoFactoryContract=new web3.eth.Contract(
                 dataFactory["abi"],
-                '0xEe8727B6D083eA585B784492f61e84bEF40aFb75'
+                '0xb6859a837025d2190a5b69fb1600C30e063bE094'
             );
         }
         catch(err){
