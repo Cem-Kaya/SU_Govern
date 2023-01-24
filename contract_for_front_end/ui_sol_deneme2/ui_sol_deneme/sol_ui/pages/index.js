@@ -8,19 +8,24 @@ import { SimpleGrid } from "@chakra-ui/react";
 import Header from "../components/Header";
 
 export default function Home() {
-  const [alertMessage, setAlertMessage] = useState({ text: "", title: "" });
-  const [popupTrigger, setPopupTrigger] = useState(false);
-  const [initialized, setInitialized] = useState(false);
-  const [daoFactoryContract, setDaoFactoryContract] = useState(undefined);
-  const [walletAddress, setWalletAddress] = useState(undefined);
-  const [all_daos, setall_daos] = useState([]);
-  const [topDAOAddress, setTopDAOAddress] = useState("");
+  const [alertMessage, setAlertMessage] = useState({ text: "", title: "" }); //this is used inside Popup component, to pass a message to the inside of the popup when an error occurs, or a transaction is successful, or in a case of warning
+  const [popupTrigger, setPopupTrigger] = useState(false);  //this is used inside Popup component, to trigger the popup to show up
+  const [initialized, setInitialized] = useState(false); //to check if the page is initialized, i.e. init() function is ran successfully
+  const [daoFactoryContract, setDaoFactoryContract] = useState(undefined); //to store the DAOFactory contract instance
+  const [walletAddress, setWalletAddress] = useState(undefined); //to store the wallet address of the user
+  const [all_daos, setall_daos] = useState([]); //to store all the DAOs created by the DAOFactory contract
+  const [topDAOAddress, setTopDAOAddress] = useState(""); //to store the address of the top DAO
+  
+  //these are the data of the contracts, we will use them in init() function
+  //we will take the abi of the contracts from these files, and we will take the address of the contracts from the URL
   const dataFactory = require("../blockchain1/build/contracts/DAOFactory.json");
   const dataDAO = require("../blockchain1/build/contracts/MyDAO.json");
 
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(false); //to check if the page is loaded, i.e. all the DAOs are fetched from the blockchain
 
   useEffect(() => {
+    
+    //fetch the amount of DAOs created by the DAOFactory contract
     const fetchNextDaoId = async () => {
       if (!initialized) {
         await init();
@@ -49,6 +54,7 @@ export default function Home() {
       let provider = window.ethereum;
       let daoABI = dataDAO["abi"];
       const web3 = new Web3(provider);
+      //fetch the address of the top DAO
       await daoFactoryContract.methods
         .top_dao()
         .call()
@@ -59,8 +65,12 @@ export default function Home() {
           setAlertMessage({ text: err.message, title: "Error" });
           setPopupTrigger(true);
         });
+      
       let allDaos = [];
-
+      //fetch all the DAOs created by the DAOFactory contract
+      //fetch if the dao is deleted or not, if it is deleted, then we will not show it in the UI
+      //fetch the name and description of the DAOs
+      //push the DAOs to allDaos array
       for (let i = 0; i < numOfDaos; i++) {
         let daoAddress, daoName, daoDescription;
         await daoFactoryContract.methods
@@ -74,6 +84,9 @@ export default function Home() {
             setPopupTrigger(true);
           });
 
+        //check if the DAO is deleted or not, if it is deleted, then we will not show it in the UI
+        //dao_exists() function is a function of DAOFactory contract, it checks if the DAO is deleted or not
+        //dao_exists() gives out an error if the daoAddress was never used to create a DAO
         let daoExists = false;
         await daoFactoryContract.methods
           .dao_exists(daoAddress)
@@ -114,9 +127,10 @@ export default function Home() {
         }
       }
       setall_daos(allDaos);
-      setLoaded(true);
+      setLoaded(true);  //all the DAOs are fetched from the blockchain, so we set loaded to true
       return 0;
     };
+    
     fetchAllDaos();
   }, []);
 
@@ -126,17 +140,18 @@ export default function Home() {
   };
 
   const connectWallethandler= async ()=>{
-    if(typeof window !=="undefined" && typeof window.ethereum !== "undefined"){
+    if(typeof window !=="undefined" && typeof window.ethereum !== "undefined")  //we have metamask installed
+    {
         try {
-         window.ethereum.request({method: "eth_requestAccounts"})
+         window.ethereum.request({method: "eth_requestAccounts"}) //try to connect to the wallet
         }
         catch(err){
-             setAlertMessage({text: err.message, title: "Error"})
+             setAlertMessage({text: err.message, title: "Error"}) //connection failed, show the error message
              setPopupTrigger(true)
         }
      }
     else{
-         setAlertMessage({text: "Please install Metamask", title: "Error"})
+         setAlertMessage({text: "Please install Metamask", title: "Error"}) //metamask is not installed, show the error message
          setPopupTrigger(true)
     }
 
@@ -146,17 +161,21 @@ export default function Home() {
     let provider = window.ethereum;
     if (typeof provider !== "undefined") {
       provider
-        .request({ method: "eth_requestAccounts" })
+        .request({ method: "eth_requestAccounts" }) //try to take wallet address from metamask if connected, otherwise try to connect to the wallet
         .then((accounts) => {
-          setWalletAddress(accounts[0]);
+          setWalletAddress(accounts[0]);  //take wallet address from metamask if connected
         })
         .catch((err) => {
+          //could not take wallet address from metamask, for some reason
           setAlertMessage({ text: err.message, title: "Error" });
           setPopupTrigger(true);
         });
-
-      window.ethereum.on("accountsChanged", function (accounts) {
-        setWalletAddress(accounts[0]);
+        
+        //if the wallet address is changed or the user disconnected their wallet, we will take the new address and show it on the screen
+        //we will also show a message to the user
+        //wallet address is undefined if the user disconnected their wallet
+        window.ethereum.on("accountsChanged", function (accounts) {
+        setWalletAddress(accounts[0]); //undefined if disconnected
         if(accounts[0]===undefined || accounts[0]===null){
           setAlertMessage({text: "Disconnected from the wallet", title: "Warning"});
         }
@@ -174,6 +193,7 @@ export default function Home() {
 
     let daoFactoryABI = dataFactory["abi"];
 
+    //create contract object using the abi and the address of the factory contract
     try {
       daoFactoryContract = new web3.eth.Contract(
         daoFactoryABI,
@@ -188,8 +208,10 @@ export default function Home() {
       return;
     }
 
+    //set the contract object in the state
     setDaoFactoryContract(daoFactoryContract);
   };
+  
   return (
     <div>
       <Head>

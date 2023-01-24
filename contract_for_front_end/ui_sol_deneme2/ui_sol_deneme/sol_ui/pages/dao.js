@@ -1,5 +1,5 @@
 import 'bulma/css/bulma.css'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import React from "react"
 import Web3 from 'web3'
 import Head from 'next/head'
@@ -25,25 +25,30 @@ import LockScreen from '../components/LockScreen'
 import TransferTokens from '../daoTabs/TransferTokens'
 
 export default function Dao(){
-    const router = useRouter();
-    const address = router.query["address"];
-    const [initialized, setInitialized] = useState(false);
-    const [transactionInProgress, setTransactionInProgress] = useState(false);
-    const [contracts, setContracts] = useState({daoContract: undefined, voterTokenContract: undefined, ykTokenContract: undefined, daoFactoryContract: undefined});
-    const [walletAddress, setWalletAddress] = useState(undefined)
-    const [alertMessage,setAlertMessage] = useState({text: "", title: ""})
-    const [daoInfo, setDaoInfo] = useState({name: "", description: "", total_voter_tokens: 0, total_yk_tokens: 0, total_proposals: 0, total_subdaos: 0})
-    const [popupTrigger, setPopupTrigger] = useState(false)
-    const [selectedNavItem, setSelectedNavItem] = useState(10);
+    const router = useRouter(); //next js component to take information from url
+    const address = router.query["address"]; //address of the DAO from the URL 
+    const [initialized, setInitialized] = useState(false);  //to check if the page is initialized, i.e. init() function is ran successfully
+    const [transactionInProgress, setTransactionInProgress] = useState(false);  //this is used inside LockScreen component, to show a component that covers the entire page and a spinner when a transaction is in progress
+    const [contracts, setContracts] = useState({daoContract: undefined, voterTokenContract: undefined, ykTokenContract: undefined, daoFactoryContract: undefined}); //contracts that we need in our function calls, we will set them in init() function
+    const [walletAddress, setWalletAddress] = useState(undefined) //address of the wallet that is connected to the page, we will try to set it in init() function
+    const [alertMessage,setAlertMessage] = useState({text: "", title: ""})  //this is used inside Popup component, to pass a message to the inside of the popup when an error occurs, or a transaction is successful, or in a case of warning
+    const [daoInfo, setDaoInfo] = useState({name: "", description: "", total_voter_tokens: 0, total_yk_tokens: 0, total_proposals: 0, total_subdaos: 0}) //this is used to store the information about the DAO, we will set it in init() function, we will show it on the textbox under the DAO image
+    const [popupTrigger, setPopupTrigger] = useState(false) //this is used inside Popup component, to trigger the popup when an error occurs, or a transaction is successful, or in a case of warning
+    const [selectedNavItem, setSelectedNavItem] = useState(10); //this is used to change between the tabs, we will set it when a user clicks on the buttons on the sidebar, in default it is set to 10, which is the view proposals tab
+    
+    //these are the data of the contracts that, we will use them in init() function
+    //we will take the abi of the contracts from these files, and we will take the address of the contracts from the URL
     const dataDAO = require('../blockchain1/build/contracts/MyDAO.json');
     const dataToken = require('../blockchain1/build/contracts/SUToken.json');
     const dataFactory = require('../blockchain1/build/contracts/DAOFactory.json');
 
     useEffect(() => {
+        //on page load, wait until address is read from the URL, then initialize the page using the init() function
         const initializer = async () => {
-            if (!initialized && address !== undefined) {
-                await init();
-                setInitialized(true);
+            if (!initialized && address !== undefined) //wait until address is read from the URL, if initialized we can bypass this
+            {
+                await init();   //initialize the page
+                setInitialized(true);  //set initialized to true, since we have initialized the page at this point
             }
         }
         initializer();
@@ -51,17 +56,18 @@ export default function Dao(){
 
         
     const connectWallethandler= async ()=>{
-       if(typeof window !=="undefined" && typeof window.ethereum !== "undefined"){
+       if(typeof window !=="undefined" && typeof window.ethereum !== "undefined") //we have metamask installed
+       {
            try {
-            window.ethereum.request({method: "eth_requestAccounts"})
+            window.ethereum.request({method: "eth_requestAccounts"}) //try to connect to the wallet
            }
            catch(err){
-                setAlertMessage({text: err.message, title: "Error"})
+                setAlertMessage({text: err.message, title: "Error"}) //connection failed, show the error message
                 setPopupTrigger(true)
            }
         }
        else{
-            setAlertMessage({text: "Please install Metamask", title: "Error"})
+            setAlertMessage({text: "Please install Metamask", title: "Error"}) //metamask is not installed, show the error message
             setPopupTrigger(true)
        }
 
@@ -72,17 +78,23 @@ export default function Dao(){
         
         if (typeof provider !== 'undefined') {
             provider
-                .request({ method: 'eth_requestAccounts' })
+                .request({ method: 'eth_requestAccounts' }) //try to take wallet address from metamask if connected, otherwise try to connect to the wallet
                 .then((accounts) => {
-                    setWalletAddress(accounts[0]);
+                    setWalletAddress(accounts[0]);  //take wallet address from metamask if connected
                 })
-                .catch((err) => {
+                .catch((err) => //could not take wallet address from metamask, for some reason
+                {   
                     // setAlertMessage({text: err.message, title: "Error"});
                     // setPopupTrigger(true);
                     return;
                 });
-    
+            
+            
+            //if the wallet address is changed or the user disconnected their wallet, we will take the new address and show it on the screen
+            //we will also show a message to the user
+            //wallet address is undefined if the user disconnected their wallet
             window.ethereum.on('accountsChanged', function (accounts) {
+                
                 setWalletAddress(accounts[0]); //undefined if disconnected
                 if(accounts[0]===undefined || accounts[0]===null){
                     setAlertMessage({text: "Disconnected from the wallet", title: "Warning"});
@@ -99,6 +111,7 @@ export default function Dao(){
     
         const web3 = new Web3(provider);
     
+        //old function that we tried to use to get the network id, we don't need it anymore
         //const networkId = await web3.eth.net.getId();
         // nftContract = new web3.eth.Contract(
         // 	NFTContractBuild.abi,
@@ -106,6 +119,8 @@ export default function Dao(){
         // );
         //web3 = new Web3(window.ethereum);
         
+        
+        //create contract objects using the abis and the addresses of the contracts
         let daoContract, daoFactoryContract, voterTokenContract, ykTokenContract;
 
         try{
@@ -120,6 +135,8 @@ export default function Dao(){
             return;
         }
 
+        //Check if this DAO exists, using the mapping inside the DAOFactory contract
+        //dao_exists() function returns true if the DAO exists, false if the dao is deleted, and gives out error if the DAO does not exist at all
         let daoExists;
         await daoFactoryContract.methods
           .dao_exists(address)
@@ -132,10 +149,12 @@ export default function Dao(){
             setPopupTrigger(true);
           });
         
+        //This dao was deleted
         if (!daoExists) {
             setAlertMessage({ text: "DAO does not exist", title: "Error" });
             setPopupTrigger(true);
-            return;
+            return; //find a better way to handle this, maybe redirect to the home page after showing the error message
+                    //right now we are just returning from the function
         }
 
         try{
@@ -150,6 +169,8 @@ export default function Dao(){
             return;
         }
 
+        //get information regarding the DAO
+        //we will get the name, description, number of children, and the names of the proposals (names of the proposals to find out the number of proposals)
         var daoName, daoDescription, numChildren, proposalNames;
         await daoFactoryContract.methods.num_children(String(address)).call().then((result) => {numChildren = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         await daoContract.methods.dao_name().call().then((result) => {daoName = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
@@ -157,10 +178,12 @@ export default function Dao(){
         await daoContract.methods.getProposalName().call().then((result) => {proposalNames = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setDaoInfo({name: daoName, description: daoDescription, num_children: numChildren, total_proposals: proposalNames.length});
         
+        //get the addresses of the voter token and the yk token
         let ykTokenAddress, voterTokenAddress;
         await daoContract.methods.voter_token().call().then((result)=>{ voterTokenAddress=result}).catch((err)=>{setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         await daoContract.methods.yk_token().call().then((result)=>{ ykTokenAddress=result}).catch((err)=>{setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         
+        //create contract objects for the voter token and the yk token
         try{
             voterTokenContract=new web3.eth.Contract(
                 dataToken["abi"],
@@ -185,35 +208,18 @@ export default function Dao(){
             return;
         }
 
+        //set the contract objects in the state
         setContracts({daoContract: daoContract, daoFactoryContract: daoFactoryContract, voterTokenContract: voterTokenContract, ykTokenContract: ykTokenContract});
     };
 
-    async function getGasEstimation(contract, funcName, parameters) { //probably not useful
-        let provider = window.ethereum;
-        const web3 = new Web3(provider);
-        const contractAddress = contract._address;
-        const funcSig = web3.eth.abi.encodeFunctionSignature(`${funcName}(${parameters.map((p) => p.type).join(',')})`);
-        const encodedParams = web3.eth.abi.encodeParameters(parameters.map((p) => p.type), parameters.map((p) => p.value));
-        const data = funcSig + encodedParams.substring(2);
-      
-        try {
-          const gasAmount = await web3.eth.estimateGas({
-            to: contractAddress,
-            data: data,
-          });
-          console.log(gasAmount);
-          return gasAmount;
-        } catch (error) {
-          console.error(error);
-          // handle the error
-        }
-      }
-
+    //Gas amount estimation function, for transactions that require gas
+    //This function is called before the transaction is sent, and the gas limit is set to the returned value
     const getGasLimit = async (contract, funcName, parameters) => {
         let provider = window.ethereum;
         const web3 = new Web3(provider);
         const contractAddress = contract._address;
-        const encodedABI = contract.methods[funcName](...parameters).encodeABI();
+        const encodedABI = contract.methods[funcName](...parameters).encodeABI(); //encode the function call
+        //Simulate transaction using the estimateGas function
         const gasLimit = await web3.eth.estimateGas({
             to: contractAddress,  // The address of the contract that contains the function
             data: encodedABI,
@@ -229,7 +235,9 @@ export default function Dao(){
         return gasLimit;
     }
 
-    const getGasPrice = async () => { //probably not gonna use this
+    //probably not gonna use this
+    //this function is used to get the current gas price of the network
+    const getGasPrice = async () => { 
         let provider = window.ethereum;
         const web3 = new Web3(provider);
         const gasPrice = await web3.eth.getGasPrice();
@@ -237,6 +245,9 @@ export default function Dao(){
         return gasPrice;
     }
 
+    //address_given is the address of the DAO
+    //this function is used to get the name of the DAO
+    //before each dao function call, we need to make sure that this page is initialized since we would need to use walletAddress and contracts
     const getDaoName = async (address_given) => {
         if (!initialized) {
             await init();
@@ -259,11 +270,14 @@ export default function Dao(){
             return;
         }
 
+        //get the name of the DAO, set the return value to daoName, give out a popup alert if there is an error, and return the value if there is no error
         let daoName;
         await tempDaoContract.methods.dao_name().call().then((result) => {daoName = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return daoName;
     }
 
+    //address_given is the address of the DAO
+    //this function is used to get the description of the DAO
     const getDaoDescription = async (address_given) => {
         if (!initialized) {
             await init();
@@ -276,17 +290,24 @@ export default function Dao(){
             daoABI,
             address_given
         );
+
+        //get the description of the DAO, set the return value to daoDescription, give out a popup alert if there is an error, and return the value if there is no error
         let daoDescription;
         await tempDaoContract.methods.dao_description().call().then((result) => {daoDescription = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return daoDescription;
     }
 
+    //create new proposal, passed into CreateProposal.js tab
+    //name is the name of the proposal, description is the description of the proposal, vote is an array of strings (options), power is the voting power of the proposal, type is the type of the proposal (weighted or normal)
+    //calling this function requires the user to be a YK, but we handle the error if the user is not a YK
     const createNewProposal =async (name, description, vote, power, type)=> {
         
         if (!initialized) {
             await init();
         }
-
+        
+        //We can set initial votes even before the proposal is created, but to make it fair we set it to 0
+        //But there is an implementation in the contract that allows us to set initial votes something other than 0
         var initial_votes = []
         for (var i = 0; i < vote.length ; i++) 
         {
@@ -297,42 +318,59 @@ export default function Dao(){
         });
         let gasLimit;
         
+        //get the gas limit for the transaction, and send the transaction
+        //getGasLimit is a function that estimates the gas limit for a transaction, by simulating the transaction
         await getGasLimit(contracts.daoContract, "createProposal", [String(name), String(description), vote, initial_votes, parseInt(power), parseInt(type)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
-        setTransactionInProgress(true);
+        setTransactionInProgress(true); //set the transactionInProgress to true, activate the screenlock component, so that the user cannot send another transaction while the current transaction is in progress
         await contracts.daoContract.methods.createProposal(String(name), String(description),vote, initial_votes, parseInt(power), parseInt(type)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully created a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return 0;
     }    
 
+    //delete the DAO, passed into DeleteDAO.js tab
+    //calling this function requires the user to be a YK, but we handle the error if the user is not a YK
     const deleteThisDAO = async () => {
         if (!initialized) {
             await init();
         }
+
+        //get the gas limit for the transaction, and send the transaction
+        //getGasLimit is a function that estimates the gas limit for a transaction, by simulating the transaction
         let gasLimit;
         await getGasLimit(contracts.daoContract, "delete_this_dao", []).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
-        setTransactionInProgress(true);
+        setTransactionInProgress(true); //set the transactionInProgress to true, activate the screenlock component, so that the user cannot send another transaction while the current transaction is in progress
         await contracts.daoContract.methods.delete_this_dao().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully deleted the DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         return 0;
     }
 
+    //vote on a normal proposal, passed into VoteOnProposals.js tab
+    //votes are not multiplied by the amount of voter tokens that user has
+    //id is the id of the proposal, vote is an array of strings (options), vote_power is an array of integers (voting power distribution)
     const voteOnNormalProposal = async (id,vote,vote_power) => {
         if (!initialized) {
             await init();
         } 
 
+        //to make sure the inputs are in the correct format
         vote.forEach(element => {
             element = String(element)
         });
         vote_power.forEach(element => {
             element = parseInt(element)
         });
+
+        //get the gas limit for the transaction, and send the transaction
+        //getGasLimit is a function that estimates the gas limit for a transaction, by simulating the transaction
         let gasLimit;
         await getGasLimit(contracts.daoContract, "vote_power", [parseInt(id), vote, vote_power]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
-        setTransactionInProgress(true);
+        setTransactionInProgress(true); //set transactionInProgress to true, activate the screenlock component, so that the user cannot do anything else while the transaction is in progress
         await contracts.daoContract.methods.vote_power(parseInt(id), vote, vote_power).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully voted on a proposal", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         
         return 0;
     }
 
+    //vote on a weighted proposal, passed into VoteOnProposals.js tab
+    //votes are multiplied by the amount of voter tokens that user has
+    //id is the id of the proposal, vote is an array of strings (options), vote_power is an array of integers (voting power distribution), weight is the amount of voter tokens that user wants to use (at max the amount of tokens that user has)
     const voteOnWeightedProposal = async (id,vote,vote_power,weight) => {
         if (!initialized) {
             await init();
@@ -354,6 +392,8 @@ export default function Dao(){
         return 0;
     }
 
+    //get proposal information, passed into ViewProposals.js tab, and the VoteOnProposals.js tab
+    //returns an array of objects, where each object is a proposal, and the object has the proposal id as the key, and the proposal name, vote names, vote numbers, and proposal power in an array as the value
     const getAllProposals = async ()=> {
         
         if (!initialized) {
@@ -362,12 +402,15 @@ export default function Dao(){
         var proposalNames
         await contracts.daoContract.methods.getProposalName().call().then((result) => {proposalNames = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         
+        //put proposals in a mapping with the proposal id as the key, and the proposal name, vote names, vote numbers, and proposal power in an array as the value
+        //mapping inside of a mapping
         var proposals = []
         proposalNames.forEach((name, index) => {
             var proposal = {}
             proposal[index] = [name]
             proposals.push(proposal)
         })
+        //get the vote names, vote numbers, and proposal power for each proposal
         for (var i = 0; i < proposalNames.length; i++) {
             i = parseInt(i)
             await contracts.daoContract.methods.getProposalVoteNames(i).call().then((result) => {proposals[i][i].push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
@@ -381,6 +424,9 @@ export default function Dao(){
         return proposals;
     }    
 
+    //send voter tokens of given amount to another address, passed into SendVoterTokens.js tab
+    //tokens are sent from the DAO contract to the given address, (dao to user transfer)
+    //YK privilages are required to call send_voter_tokens_to_address_yk_directly() function, but the errors are handled if the user is not a YK
     const sendVoterTokens = async (address, amount) => {
         if (!initialized) {
             await init();
@@ -391,6 +437,9 @@ export default function Dao(){
         await contracts.daoContract.methods.send_voter_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //send YK tokens of given amount to another address, passed into SendYKTokens.js tab
+    //tokens are sent from the DAO contract to the given address, (dao to user transfer)
+    //YK privilages are required to call send_yk_tokens_to_address_yk_directly() function, but the errors are handled if the user is not a YK
     const sendYKTokens = async (address, amount) => {
         if (!initialized) {
             await init();
@@ -401,51 +450,62 @@ export default function Dao(){
         await contracts.daoContract.methods.send_yk_tokens_to_address_yk_directly(String(address), parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully sent tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //get voter balance from the voter token contract
     const getVoterBalance = async () => {
         if (!initialized) {
             await init();
         }
         let voterBalance
-        await contracts.voterTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {voterBalance = parseFloat(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.voterTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {voterBalance = parseInt(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return voterBalance
     }
 
+    //transfer voter tokens of given amount to another address, passed into TransferTokens.js tab
+    //tokens are sent from the wallet address to the given address (peer to peer transfer)
     const transferVoterTokens = async (address, amount) => {
         if (!initialized) {
             await init();
         }
+        //add 18 zeros to the end of the amount to convert it from wei
         let gasLimit; let zero = "0";
         await getGasLimit(contracts.voterTokenContract, "transfer", [String(address), String(amount) + zero.repeat(18)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
         await contracts.voterTokenContract.methods.transfer(String(address), String(amount) + zero.repeat(18)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully transferred tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //transfer YK tokens of given amount to another address, passed into TransferTokens.js tab
+    //tokens are sent from the wallet address to the given address (peer to peer transfer)
     const transferYKTokens = async (address, amount) => {
         if (!initialized) {
             await init();
         }
+        //add 18 zeros to the end of the amount to convert it from wei
         let gasLimit; let zero = "0";
         await getGasLimit(contracts.ykTokenContract, "transfer", [String(address), String(amount) + zero.repeat(18)]).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
         await contracts.ykTokenContract.methods.transfer(String(address), String(amount) + zero.repeat(18)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "Successfully transferred tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //get YK balance from the YK token contract
     const getYKBalance = async () => {
         if (!initialized) {
             await init();
         }
         let ykBalance
-        await contracts.ykTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {ykBalance = parseFloat(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.ykTokenContract.methods.balanceOf(String(walletAddress)).call().then((result) => {ykBalance = parseInt(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return ykBalance
     }
 
+    //get child DAOs of the current DAO
     const getSubDAOs = async () => {
         if (!initialized) {
             await init();
         }
+        //get number of child DAOs
         let numChildren
         await contracts.daoFactoryContract.methods.num_children(String(address)).call().then((result) => {numChildren = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
 
+        //iteratively get child DAO addresses
         let subDAOs = []
         for (var i = 0; i < numChildren; i++) {
             await contracts.daoFactoryContract.methods.parent_child_daos(String(address), parseInt(i)).call().then((result) => {subDAOs.push(result)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
@@ -453,6 +513,7 @@ export default function Dao(){
         return subDAOs
     }
 
+    //get parent DAO of the current DAO
     const getParentDAO = async () => {
         if (!initialized) {
             await init();
@@ -463,6 +524,9 @@ export default function Dao(){
         return parentDAOAddress
     }
 
+    //withdraw YK tokens from the DAO
+    //Only used when the DAO mints the user YK tokens, but not directly sending them to the user
+    //Example use case: when this user creates a child DAO, the parent DAO mints 1 child DAO YK token, and the user can withdraw it inside the child DAO
     const withdrawYKTokens = async (amount) => {
         if (!initialized) {
             await init();
@@ -473,6 +537,8 @@ export default function Dao(){
         await contracts.daoContract.methods.withdraw_yk_tokens(parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //withdraw voter tokens from the DAO
+    //Only used when the DAO mints the user voter tokens, but not directly sending them to the user
     const withdrawVoterTokens = async (amount) => {
         if (!initialized) {
             await init();
@@ -483,24 +549,28 @@ export default function Dao(){
         await contracts.daoContract.methods.withdraw_voter_tokens(parseInt(amount)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully withdrawn tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //get the number of YK tokens that the user can withdraw from the DAO
     const getYKSharesToBeGiven = async () => {
         if (!initialized) {
             await init();
         }
         let shares;
-        await contracts.daoContract.methods.yk_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = parseFloat(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.yk_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = parseInt(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
     }
 
+    //get the number of voter tokens that the user can withdraw from the DAO
     const getVoterSharesToBeGiven = async () => {
         if (!initialized) {
             await init();
         }
         let shares
-        await contracts.daoContract.methods.voter_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = parseFloat(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
+        await contracts.daoContract.methods.voter_shares_to_be_given(String(walletAddress)).call().then((result) => {shares = parseInt(parseInt(result) / Math.pow(10, 18))}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
         return shares
     }
 
+    //create a child DAO, in our smart contract we need to create new voter and YK tokens for the child DAO
+    //in order to deploy nw voter token and YK contracts we need to pass in the name and symbol of the tokens
     const createChildDAOFunc = async (name, description, ykTokenName, ykTokenSymbol, voterTokenName, voterTokenSymbol) => {
         if (!initialized) {
             await init();
@@ -511,6 +581,8 @@ export default function Dao(){
         await contracts.daoFactoryContract.methods.createChildDAO(address, String(name), String(description), String(ykTokenName), String(ykTokenSymbol), String(voterTokenName), String(voterTokenSymbol)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully created child DAO", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //delegate = transfer back, there is a misnamed function in the smart contract
+    //transfer back YK tokens from all of your delegates to your wallet
     const delegateAllYK = async () => {
         if (!initialized) {
             await init();
@@ -520,6 +592,9 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_delagation_multiple_getback_all_yk().send({from: walletAddress, gas:gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all YK tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+
+    //delegate = transfer back, there is a misnamed function in the smart contract
+    //transfer back voter tokens from all of your delegates to your wallet
     const delegateAllVoter = async () => {
         if (!initialized) {
             await init();
@@ -529,6 +604,8 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_delagation_multiple_getback_all_voter().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all voter tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+    //delegate = transfer back, there is a misnamed function in the smart contract
+    //transfer back YK tokens from a specific delegate to your wallet
     const delegateAllFromAddressYK = async (address_wallet) => {
         if (!initialized) {
             await init();
@@ -538,6 +615,8 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_delegation_single_getback_all_yk(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+    //delegate = transfer back, there is a misnamed function in the smart contract
+    //transfer back voter tokens from a specific delegate to your wallet
     const delegateAllFromAddressVoter = async (address_wallet) => {
         if (!initialized) {
             await init();
@@ -547,6 +626,8 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_delegation_single_getback_all_voter(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated all voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+    //delegate = transfer back, there is a misnamed function in the smart contract
+    //transfer back a specific amount of YK tokens from a specific delegate to your wallet
     const delegateSomeFromAddressYK = async (address_wallet, amount_token) => {
         if (!initialized) {
             await init();
@@ -556,6 +637,8 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_delegation_single_getback_amount_yk(String(address_wallet), String(amount_token + zero.repeat(18))).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated some YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+    //delegate = transfer back, there is a misnamed function in the smart contract
+    //transfer back a specific amount of voter tokens from a specific delegate to your wallet
     const delegateSomeFromAddressVoter = async (address_wallet, amount_token) => {
         if (!initialized) {
             await init();
@@ -565,6 +648,8 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_delegation_single_getback_amount_voter(String(address_wallet), String(amount_token  + zero.repeat(18))).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully delegated some voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+    
+    //dao clawback, clawback YK tokens from all possible YK token holders
     const clawBackYKFromAll = async () => {
         if (!initialized) {
             await init();
@@ -574,7 +659,9 @@ export default function Dao(){
         await getGasLimit(contracts.daoContract, "dao_clawback_all_yk", []).then((result) => {gasLimit = result}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)});
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_clawback_all_yk().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back all YK tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
-     }
+    }
+
+    //dao clawback, clawback voter tokens from all possible voter token holders
     const clawBackVoterFromAll = async () => {
         if (!initialized) {
             await init();
@@ -584,6 +671,8 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_clawback_all_voter().send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back all voter tokens", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+
+    //dao clawback, clawback YK tokens from a specific YK token holder
     const clawBackYKFromSingleAddress = async (address_wallet) => {
         if (!initialized) {
             await init();
@@ -594,6 +683,8 @@ export default function Dao(){
         setTransactionInProgress(true);
         await contracts.daoContract.methods.dao_clawback_single_yk(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back YK tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
+
+    //dao clawback, clawback voter tokens from a specific voter token holder
     const clawBackVoterFromSingleAddress = async (address_wallet) => {
         if (!initialized) {
             await init();
@@ -605,6 +696,8 @@ export default function Dao(){
         await contracts.daoContract.methods.dao_clawback_single_voter(String(address_wallet)).send({from: walletAddress, gas: gasLimit}).then(() => {setAlertMessage({text: "successfully clawed back voter tokens from address", title: "Success"}); setPopupTrigger(true)}).catch((err) => {setAlertMessage({text: err.message, title: "Error"}); setPopupTrigger(true)})
     }
 
+    //return dao page body with respect to the selected nav item state
+    //we should add a state that when the dao does not exist, we should not return any of these tabs
     const getHTMLBody = () => {
         return  selectedNavItem === 0 ?
                     <CreateChildDAO onCreateChildDAO={createChildDAOFunc}></CreateChildDAO>
